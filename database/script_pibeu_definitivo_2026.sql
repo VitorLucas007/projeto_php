@@ -1,0 +1,174 @@
+DROP DATABASE IF EXISTS projeto_pibeu;
+CREATE DATABASE IF NOT EXISTS projeto_pibeu;
+USE projeto_pibeu;
+
+-- TABELA: UNIDADE
+-- (As filiais/polos devem ser criadas antes dos usuários, pois todos precisam se vincular a uma)
+CREATE TABLE unidade (
+    id_unidade INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    endereco VARCHAR(255),
+    telefone VARCHAR(20),
+    status BOOLEAN DEFAULT TRUE
+);
+
+-- TABELA: PERFIL
+-- (Guarda os níveis de acesso estáticos: ADMIN, PROFESSOR, PESSOA)
+CREATE TABLE perfil (
+    id_perfil INT AUTO_INCREMENT PRIMARY KEY,
+    nome_perfil VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Carga inicial obrigatória de perfis
+INSERT INTO perfil (id_perfil, nome_perfil) VALUES 
+(1, 'ADMIN'), 
+(2, 'PROFESSOR'), 
+(3, 'PESSOA');
+
+-- TABELA: PESSOA
+-- (Centraliza os dados cadastrais básicos e anamnese de qualquer indivíduo físico)
+CREATE TABLE pessoa (
+    id_pessoa INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    sexo ENUM('M', 'F', 'OUTRO') NOT NULL,
+    data_nascimento DATE NOT NULL,
+    profissao VARCHAR(100),
+    contato VARCHAR(20),
+    email VARCHAR(150) UNIQUE,
+    estilo_vida VARCHAR(50),
+    atividade_fisica VARCHAR(150),
+    tabagismo BOOLEAN DEFAULT FALSE,
+    alcool BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TABELA: USUARIO
+-- (Gerencia as credenciais de login, o perfil de acesso e o vínculo obrigatório com a Unidade)
+CREATE TABLE usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    fk_pessoa INT NOT NULL UNIQUE,
+    fk_perfil INT NOT NULL,
+    fk_unidade INT NOT NULL, -- Obrigatório para todos (inclusive múltiplos Admins por unidade)
+
+    login VARCHAR(100) NOT NULL UNIQUE,
+    senha_hash VARCHAR(255) NOT NULL,
+
+    -- Padrão 'PENDENTE'. Na aplicação, o Admin força 'APROVADO' para si mesmo no cadastro inicial
+    status_aprovacao ENUM('PENDENTE', 'APROVADO', 'REJEITADO') DEFAULT 'PENDENTE',
+    ativo BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_usuario_pessoa FOREIGN KEY (fk_pessoa) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE,
+    CONSTRAINT fk_usuario_perfil FOREIGN KEY (fk_perfil) REFERENCES perfil(id_perfil),
+    CONSTRAINT fk_usuario_unidade FOREIGN KEY (fk_unidade) REFERENCES unidade(id_unidade)
+);
+
+-- TABELA: PROFESSOR
+-- (Guarda informações específicas complementares ao usuário do tipo Professor)
+CREATE TABLE professor (
+    id_professor INT AUTO_INCREMENT PRIMARY KEY,
+    fk_pessoa INT NOT NULL UNIQUE,
+    cref VARCHAR(30),
+    especialidade VARCHAR(100),
+    
+    CONSTRAINT fk_professor_pessoa FOREIGN KEY (fk_pessoa) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE
+);
+
+-- TABELA: ALUNO
+-- (Guarda informações específicas complementares ao usuário do tipo Aluno/Pessoa)
+CREATE TABLE aluno (
+    id_aluno INT AUTO_INCREMENT PRIMARY KEY,
+    fk_pessoa INT NOT NULL UNIQUE,
+    observacoes TEXT,
+    
+    CONSTRAINT fk_aluno_pessoa FOREIGN KEY (fk_pessoa) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE
+);
+
+-- TABELA: PRONTUARIO
+CREATE TABLE prontuario (
+    id_prontuario INT AUTO_INCREMENT PRIMARY KEY,
+    fk_aluno INT NOT NULL UNIQUE,
+    data_abertura DATE NOT NULL,
+    observacoes_gerais TEXT,
+    
+    CONSTRAINT fk_prontuario_aluno FOREIGN KEY (fk_aluno) REFERENCES aluno(id_aluno) ON DELETE CASCADE
+);
+
+-- TABELA: AVALIACAO
+CREATE TABLE avaliacao (
+    id_avaliacao INT AUTO_INCREMENT PRIMARY KEY,
+    fk_prontuario INT NOT NULL,
+    fk_professor INT NOT NULL,
+    data_avaliacao DATE NOT NULL,
+    
+    frequencia_cardiaca VARCHAR(20),
+    pressao_arterial VARCHAR(20),
+    sedentario BOOLEAN DEFAULT FALSE,
+    atividade_fisica VARCHAR(150),
+    tabagismo BOOLEAN DEFAULT FALSE,
+    alcool BOOLEAN DEFAULT FALSE,
+    
+    medicacao_controlada BOOLEAN DEFAULT FALSE,
+    medicamentos_descricao TEXT,
+    problema_osteoarticular BOOLEAN DEFAULT FALSE,
+    osteoarticular_descricao TEXT,
+    problema_neuromuscular BOOLEAN DEFAULT FALSE,
+    neuromuscular_descricao TEXT,
+    problema_coronario BOOLEAN DEFAULT FALSE,
+    coronario_descricao TEXT,
+    problema_vascular BOOLEAN DEFAULT FALSE,
+    hospitalizacao_5_anos BOOLEAN DEFAULT FALSE,
+    hospitalizacao_descricao TEXT,
+    cirurgia_5_anos BOOLEAN DEFAULT FALSE,
+    cirurgia_descricao TEXT,
+    
+    torax DECIMAL(5,2),
+    cintura DECIMAL(5,2),
+    abdominal DECIMAL(5,2),
+    quadril DECIMAL(5,2),
+    braco_relaxado_direito DECIMAL(5,2),
+    braco_relaxado_esquerdo DECIMAL(5,2),
+    braco_contraido_direito DECIMAL(5,2),
+    braco_contraido_esquerdo DECIMAL(5,2),
+    coxa_direita DECIMAL(5,2),
+    coxa_esquerda DECIMAL(5,2),
+    panturrilha_direita DECIMAL(5,2),
+    panturrilha_esquerda DECIMAL(5,2),
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_avaliacao_prontuario FOREIGN KEY (fk_prontuario) REFERENCES prontuario(id_prontuario),
+    CONSTRAINT fk_avaliacao_professor FOREIGN KEY (fk_professor) REFERENCES professor(id_professor)
+);
+
+-- TABELA: LAUDO
+CREATE TABLE laudo (
+    id_laudo INT AUTO_INCREMENT PRIMARY KEY,
+    fk_avaliacao INT NOT NULL UNIQUE,
+    descricao TEXT NOT NULL,
+    data_emissao DATE NOT NULL,
+    
+    CONSTRAINT fk_laudo_avaliacao FOREIGN KEY (fk_avaliacao) REFERENCES avaliacao(id_avaliacao) ON DELETE CASCADE
+);
+
+-- TABELA: PRESCRICAO
+CREATE TABLE prescricao (
+    id_prescricao INT AUTO_INCREMENT PRIMARY KEY,
+    fk_laudo INT NOT NULL,
+    descricao TEXT NOT NULL,
+    data_prescricao DATE NOT NULL,
+    
+    CONSTRAINT fk_prescricao_laudo FOREIGN KEY (fk_laudo) REFERENCES laudo(id_laudo) ON DELETE CASCADE
+);
+
+-- TABELA: MENSAGENS
+CREATE TABLE mensagens (
+    id_mensagem INT AUTO_INCREMENT PRIMARY KEY,
+    fk_emissor INT NOT NULL,
+    fk_receptor INT NOT NULL,
+    conteudo TEXT NOT NULL,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_mensagem_emissor FOREIGN KEY (fk_emissor) REFERENCES usuario(id_usuario),
+    CONSTRAINT fk_mensagem_receptor FOREIGN KEY (fk_receptor) REFERENCES usuario(id_usuario)
+);
