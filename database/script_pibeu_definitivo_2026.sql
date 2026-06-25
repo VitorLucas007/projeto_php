@@ -37,8 +37,8 @@ CREATE TABLE pessoa (
     email VARCHAR(150) UNIQUE,
     estilo_vida VARCHAR(50),
     atividade_fisica VARCHAR(150),
-    tabagismo BOOLEAN DEFAULT FALSE,
-    alcool BOOLEAN DEFAULT FALSE,
+    tabagismo BOOLEAN,
+    alcool BOOLEAN,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -48,7 +48,7 @@ CREATE TABLE usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     fk_pessoa INT NOT NULL UNIQUE,
     fk_perfil INT NOT NULL,
-    fk_unidade INT NOT NULL, -- Obrigatório para todos (inclusive múltiplos Admins por unidade)
+    fk_unidade INT NOT NULL,
 
     login VARCHAR(100) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
@@ -103,23 +103,23 @@ CREATE TABLE avaliacao (
     
     frequencia_cardiaca VARCHAR(20),
     pressao_arterial VARCHAR(20),
-    sedentario BOOLEAN DEFAULT FALSE,
+    sedentario BOOLEAN,
     atividade_fisica VARCHAR(150),
-    tabagismo BOOLEAN DEFAULT FALSE,
-    alcool BOOLEAN DEFAULT FALSE,
+    tabagismo BOOLEAN,
+    alcool BOOLEAN,
     
-    medicacao_controlada BOOLEAN DEFAULT FALSE,
+    medicacao_controlada BOOLEAN,
     medicamentos_descricao TEXT,
-    problema_osteoarticular BOOLEAN DEFAULT FALSE,
+    problema_osteoarticular BOOLEAN,
     osteoarticular_descricao TEXT,
-    problema_neuromuscular BOOLEAN DEFAULT FALSE,
+    problema_neuromuscular BOOLEAN,
     neuromuscular_descricao TEXT,
-    problema_coronario BOOLEAN DEFAULT FALSE,
+    problema_coronario BOOLEAN,
     coronario_descricao TEXT,
-    problema_vascular BOOLEAN DEFAULT FALSE,
-    hospitalizacao_5_anos BOOLEAN DEFAULT FALSE,
+    problema_vascular BOOLEAN,
+    hospitalizacao_5_anos BOOLEAN,
     hospitalizacao_descricao TEXT,
-    cirurgia_5_anos BOOLEAN DEFAULT FALSE,
+    cirurgia_5_anos BOOLEAN,
     cirurgia_descricao TEXT,
     
     torax DECIMAL(5,2),
