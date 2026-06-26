@@ -1,0 +1,221 @@
+-- --------------------------------------------------------
+-- Servidor:                     127.0.0.1
+-- Versão do servidor:           10.4.32-MariaDB - mariadb.org binary distribution
+-- OS do Servidor:               Win64
+-- HeidiSQL Versão:              12.17.0.7270
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- Copiando estrutura do banco de dados para projeto_pibeu
+CREATE DATABASE IF NOT EXISTS `projeto_pibeu` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+USE `projeto_pibeu`;
+
+-- Copiando estrutura para tabela projeto_pibeu.aluno
+CREATE TABLE IF NOT EXISTS `aluno` (
+  `id_aluno` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_pessoa` int(11) NOT NULL,
+  `observacoes` text DEFAULT NULL,
+  PRIMARY KEY (`id_aluno`),
+  UNIQUE KEY `fk_pessoa` (`fk_pessoa`),
+  CONSTRAINT `fk_aluno_pessoa` FOREIGN KEY (`fk_pessoa`) REFERENCES `pessoa` (`id_pessoa`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.aluno: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.avaliacao
+CREATE TABLE IF NOT EXISTS `avaliacao` (
+  `id_avaliacao` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_prontuario` int(11) NOT NULL,
+  `fk_professor` int(11) NOT NULL,
+  `data_avaliacao` date NOT NULL,
+  `frequencia_cardiaca` varchar(20) DEFAULT NULL,
+  `pressao_arterial` varchar(20) DEFAULT NULL,
+  `sedentario` tinyint(1) DEFAULT 0,
+  `atividade_fisica` varchar(150) DEFAULT NULL,
+  `tabagismo` tinyint(1) DEFAULT 0,
+  `alcool` tinyint(1) DEFAULT 0,
+  `medicacao_controlada` tinyint(1) DEFAULT 0,
+  `medicamentos_descricao` text DEFAULT NULL,
+  `problema_osteoarticular` tinyint(1) DEFAULT 0,
+  `osteoarticular_descricao` text DEFAULT NULL,
+  `problema_neuromuscular` tinyint(1) DEFAULT 0,
+  `neuromuscular_descricao` text DEFAULT NULL,
+  `problema_coronario` tinyint(1) DEFAULT 0,
+  `coronario_descricao` text DEFAULT NULL,
+  `problema_vascular` tinyint(1) DEFAULT 0,
+  `hospitalizacao_5_anos` tinyint(1) DEFAULT 0,
+  `hospitalizacao_descricao` text DEFAULT NULL,
+  `cirurgia_5_anos` tinyint(1) DEFAULT 0,
+  `cirurgia_descricao` text DEFAULT NULL,
+  `torax` decimal(5,2) DEFAULT NULL,
+  `cintura` decimal(5,2) DEFAULT NULL,
+  `abdominal` decimal(5,2) DEFAULT NULL,
+  `quadril` decimal(5,2) DEFAULT NULL,
+  `braco_relaxado_direito` decimal(5,2) DEFAULT NULL,
+  `braco_relaxado_esquerdo` decimal(5,2) DEFAULT NULL,
+  `braco_contraido_direito` decimal(5,2) DEFAULT NULL,
+  `braco_contraido_esquerdo` decimal(5,2) DEFAULT NULL,
+  `coxa_direita` decimal(5,2) DEFAULT NULL,
+  `coxa_esquerda` decimal(5,2) DEFAULT NULL,
+  `panturrilha_direita` decimal(5,2) DEFAULT NULL,
+  `panturrilha_esquerda` decimal(5,2) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_avaliacao`),
+  KEY `fk_avaliacao_prontuario` (`fk_prontuario`),
+  KEY `fk_avaliacao_professor` (`fk_professor`),
+  CONSTRAINT `fk_avaliacao_professor` FOREIGN KEY (`fk_professor`) REFERENCES `professor` (`id_professor`),
+  CONSTRAINT `fk_avaliacao_prontuario` FOREIGN KEY (`fk_prontuario`) REFERENCES `prontuario` (`id_prontuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.avaliacao: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.laudo
+CREATE TABLE IF NOT EXISTS `laudo` (
+  `id_laudo` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_avaliacao` int(11) NOT NULL,
+  `descricao` text NOT NULL,
+  `data_emissao` date NOT NULL,
+  PRIMARY KEY (`id_laudo`),
+  UNIQUE KEY `fk_avaliacao` (`fk_avaliacao`),
+  CONSTRAINT `fk_laudo_avaliacao` FOREIGN KEY (`fk_avaliacao`) REFERENCES `avaliacao` (`id_avaliacao`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.laudo: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.mensagens
+CREATE TABLE IF NOT EXISTS `mensagens` (
+  `id_mensagem` int(11) NOT NULL AUTO_INCREMENT,
+  `conteudo` text NOT NULL,
+  `data_envio` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_mensagem`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.mensagens: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.perfil
+CREATE TABLE IF NOT EXISTS `perfil` (
+  `id_perfil` int(11) NOT NULL AUTO_INCREMENT,
+  `nome_perfil` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_perfil`),
+  UNIQUE KEY `nome_perfil` (`nome_perfil`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.perfil: ~1 rows (aproximadamente)
+INSERT INTO `perfil` (`id_perfil`, `nome_perfil`) VALUES
+	(1, 'ADMIN');
+
+-- Copiando estrutura para tabela projeto_pibeu.pessoa
+CREATE TABLE IF NOT EXISTS `pessoa` (
+  `id_pessoa` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(150) NOT NULL,
+  `sexo` enum('M','F','OUTRO') NOT NULL,
+  `data_nascimento` date NOT NULL,
+  `profissao` varchar(100) DEFAULT NULL,
+  `contato` varchar(20) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `estilo_vida` varchar(50) DEFAULT NULL,
+  `atividade_fisica` varchar(150) DEFAULT NULL,
+  `tabagismo` tinyint(1) DEFAULT 0,
+  `alcool` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_pessoa`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.pessoa: ~2 rows (aproximadamente)
+INSERT INTO `pessoa` (`id_pessoa`, `nome`, `sexo`, `data_nascimento`, `profissao`, `contato`, `email`, `estilo_vida`, `atividade_fisica`, `tabagismo`, `alcool`, `created_at`) VALUES
+	(1, 'Administrador', 'M', '2000-01-01', '', '', 'admin@admin.com', NULL, NULL, 0, 0, '2026-06-12 01:12:29'),
+	(2, 'João Victor', 'M', '9987-01-18', 'Estudante', '8699999', 'joaovictor_ddm@hotmail.com', NULL, NULL, 0, 0, '2026-06-12 02:25:15');
+
+-- Copiando estrutura para tabela projeto_pibeu.prescricao
+CREATE TABLE IF NOT EXISTS `prescricao` (
+  `id_prescricao` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_laudo` int(11) NOT NULL,
+  `descricao` text NOT NULL,
+  `data_prescricao` date NOT NULL,
+  PRIMARY KEY (`id_prescricao`),
+  KEY `fk_prescricao_laudo` (`fk_laudo`),
+  CONSTRAINT `fk_prescricao_laudo` FOREIGN KEY (`fk_laudo`) REFERENCES `laudo` (`id_laudo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.prescricao: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.professor
+CREATE TABLE IF NOT EXISTS `professor` (
+  `id_professor` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_pessoa` int(11) NOT NULL,
+  `cref` varchar(30) DEFAULT NULL,
+  `especialidade` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_professor`),
+  UNIQUE KEY `fk_pessoa` (`fk_pessoa`),
+  CONSTRAINT `fk_professor_pessoa` FOREIGN KEY (`fk_pessoa`) REFERENCES `pessoa` (`id_pessoa`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.professor: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.prontuario
+CREATE TABLE IF NOT EXISTS `prontuario` (
+  `id_prontuario` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_aluno` int(11) NOT NULL,
+  `data_abertura` date NOT NULL,
+  `observacoes_gerais` text DEFAULT NULL,
+  PRIMARY KEY (`id_prontuario`),
+  UNIQUE KEY `fk_aluno` (`fk_aluno`),
+  CONSTRAINT `fk_prontuario_aluno` FOREIGN KEY (`fk_aluno`) REFERENCES `aluno` (`id_aluno`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.prontuario: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para tabela projeto_pibeu.unidade
+CREATE TABLE IF NOT EXISTS `unidade` (
+  `id_unidade` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `endereco` varchar(255) DEFAULT NULL,
+  `telefone` varchar(20) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1,
+  PRIMARY KEY (`id_unidade`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.unidade: ~1 rows (aproximadamente)
+INSERT INTO `unidade` (`id_unidade`, `nome`, `endereco`, `telefone`, `status`) VALUES
+	(1, 'Matriz', 'Principal', '(86)99999-9999', 1);
+
+-- Copiando estrutura para tabela projeto_pibeu.usuario
+CREATE TABLE IF NOT EXISTS `usuario` (
+  `id_usuario` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_pessoa` int(11) NOT NULL,
+  `fk_perfil` int(11) NOT NULL,
+  `fk_unidade` int(11) NOT NULL,
+  `login` varchar(100) NOT NULL,
+  `senha_hash` varchar(255) NOT NULL,
+  `status_aprovacao` enum('PENDENTE','APROVADO','REJEITADO') DEFAULT 'PENDENTE',
+  `ativo` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_usuario`),
+  UNIQUE KEY `fk_pessoa` (`fk_pessoa`),
+  UNIQUE KEY `login` (`login`),
+  KEY `fk_usuario_perfil` (`fk_perfil`),
+  KEY `fk_usuario_unidade` (`fk_unidade`),
+  CONSTRAINT `fk_usuario_perfil` FOREIGN KEY (`fk_perfil`) REFERENCES `perfil` (`id_perfil`),
+  CONSTRAINT `fk_usuario_pessoa` FOREIGN KEY (`fk_pessoa`) REFERENCES `pessoa` (`id_pessoa`),
+  CONSTRAINT `fk_usuario_unidade` FOREIGN KEY (`fk_unidade`) REFERENCES `unidade` (`id_unidade`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela projeto_pibeu.usuario: ~1 rows (aproximadamente)
+INSERT INTO `usuario` (`id_usuario`, `fk_pessoa`, `fk_perfil`, `fk_unidade`, `login`, `senha_hash`, `status_aprovacao`, `ativo`, `created_at`) VALUES
+	(1, 1, 1, 1, 'admin', '$2y$10$4heaR4J/ry90/UboSm3If.4KncLVZmc/wNFw91YP5Lk6xqD49otne', 'APROVADO', 1, '2026-06-12 01:12:38');
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
