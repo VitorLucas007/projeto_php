@@ -27,135 +27,98 @@ class pessoa
         $this->email = $email;
     }
 
-    function cadastrarPessoa()
+    /**
+     * Insere a pessoa usando a conexão/transação já aberta em $bd
+     * (permite compor com usuario/professor/aluno na mesma transação).
+     * Retorna o id_pessoa gerado.
+     */
+    function cadastrarPessoaTx(persistirBD $bd)
     {
-        $bd = new persistirBD(
-            "127.0.0.1",
-            "root",
-            "",
-            "projeto_pibeu"
-        );
-
-        $bd->conectar();
-
         $sql = "
         INSERT INTO pessoa
-        (
-            nome,
-            sexo,
-            data_nascimento,
-            profissao,
-            contato,
-            email
-        )
+            (nome, sexo, data_nascimento, profissao, contato, email)
         VALUES
-        (
-            '$this->nome',
-            '$this->sexo',
-            '$this->data_nascimento',
-            '$this->profissao',
-            '$this->contato',
-            '$this->email'
-        )";
+            (?, ?, ?, ?, ?, ?)
+        ";
 
-        $bd->persistir($sql);
+        $bd->persistirPreparado($sql, "ssssss", [
+            $this->nome,
+            $this->sexo,
+            $this->data_nascimento,
+            $this->profissao,
+            $this->contato,
+            $this->email
+        ]);
 
+        return $bd->ultimoId();
+    }
+
+    function cadastrarPessoa()
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+        $id = $this->cadastrarPessoaTx($bd);
         $bd->desconectar();
+        return $id;
     }
 
     function listarPessoas()
     {
-        $bd = new persistirBD(
-            "127.0.0.1",
-            "root",
-            "",
-            "projeto_pibeu"
-        );
-
+        $bd = new persistirBD();
         $bd->conectar();
 
         $sql = "SELECT * FROM pessoa ORDER BY nome";
-
         $bd->persistir($sql);
-
         $dados = $bd->retornoConsultas();
 
         $bd->desconectar();
-
         return $dados;
     }
 
     function buscarPessoa($id)
     {
-        $bd = new persistirBD(
-            "127.0.0.1",
-            "root",
-            "",
-            "projeto_pibeu"
-        );
-
+        $bd = new persistirBD();
         $bd->conectar();
 
-        $sql = "
-        SELECT *
-        FROM pessoa
-        WHERE id_pessoa = $id
-        ";
-
-        $bd->persistir($sql);
-
+        $sql = "SELECT * FROM pessoa WHERE id_pessoa = ?";
+        $bd->persistirPreparado($sql, "i", [$id]);
         $dados = $bd->retornoConsultas();
 
         $bd->desconectar();
-
         return $dados;
     }
 
     function atualizarPessoa($id)
     {
-        $bd = new persistirBD(
-            "127.0.0.1",
-            "root",
-            "",
-            "projeto_pibeu"
-        );
-
+        $bd = new persistirBD();
         $bd->conectar();
 
         $sql = "
         UPDATE pessoa
-        SET
-            nome = '$this->nome',
-            sexo = '$this->sexo',
-            data_nascimento = '$this->data_nascimento',
-            profissao = '$this->profissao',
-            contato = '$this->contato',
-            email = '$this->email'
-        WHERE id_pessoa = $id
+        SET nome = ?, sexo = ?, data_nascimento = ?, profissao = ?, contato = ?, email = ?
+        WHERE id_pessoa = ?
         ";
 
-        $bd->persistir($sql);
+        $bd->persistirPreparado($sql, "ssssssi", [
+            $this->nome,
+            $this->sexo,
+            $this->data_nascimento,
+            $this->profissao,
+            $this->contato,
+            $this->email,
+            $id
+        ]);
 
         $bd->desconectar();
     }
 
     function excluirPessoa($id)
     {
-        $bd = new persistirBD(
-            "127.0.0.1",
-            "root",
-            "",
-            "projeto_pibeu"
-        );
-
+        $bd = new persistirBD();
         $bd->conectar();
 
-        $sql = "
-        DELETE FROM pessoa
-        WHERE id_pessoa = $id
-        ";
-
-        $bd->persistir($sql);
+        $sql = "DELETE FROM pessoa WHERE id_pessoa = ?";
+        $bd->persistirPreparado($sql, "i", [$id]);
 
         $bd->desconectar();
     }

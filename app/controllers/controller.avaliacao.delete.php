@@ -2,20 +2,12 @@
 
 include_once('../models/model.avaliacao.class.php');
 
-$avaliacao = new avaliacao(
-    '',
-    '',
-    '',
-    '',
-    ''
-);
+$id = (int) ($_GET['id'] ?? 0);
 
-$avaliacao->excluirAvaliacao(
-    $_GET['id']
-);
+if ($id > 0) {
+    avaliacao::excluirAvaliacao($id);
+}
 
-header(
-    "Location: ../views/avaliacao/view.avaliacao.php"
-);
+header("Location: ../views/avaliacao/view.avaliacao.php");
 
 exit;

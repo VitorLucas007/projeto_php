@@ -5,6 +5,10 @@ if (!isset($_SESSION['id'])) {
     header("Location: ../auth/view.login.php");
     exit;
 }
+
+include_once('../../models/model.avaliacao.class.php');
+
+$dados = avaliacao::listarAvaliacoes();
 ?>
 
 <?php include_once('../layouts/view.cabecalho.php'); ?>
@@ -15,7 +19,7 @@ if (!isset($_SESSION['id'])) {
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h2>Histórico de Avaliações Físicas</h2>
-            <a href="#" class="btn btn-success btn-sm">Nova Avaliação</a>
+            <a href="view.avaliacao.create.php" class="btn btn-success btn-sm">Nova Avaliação</a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -23,7 +27,7 @@ if (!isset($_SESSION['id'])) {
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
-                            <th>Cód. Prontuário</th>
+                            <th>Prontuário</th>
                             <th>Professor Avaliador</th>
                             <th>Data Avaliação</th>
                             <th>F. Cardíaca</th>
@@ -32,20 +36,27 @@ if (!isset($_SESSION['id'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Prontuário #12</td>
-                            <td>Prof. Carlos Souza</td>
-                            <td>10/06/2026</td>
-                            <td>75 bpm</td>
-                            <td>12/8</td>
-                            <td>
-                                <a href="#" class="btn btn-info btn-sm">Ver Tudo</a>
-                                <a href="#" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="#" class="btn btn-danger btn-sm">Excluir</a>
-                            </td>
-                        </tr>
-                        </tbody>
+                    <?php if (!empty($dados)): ?>
+                        <?php foreach ($dados as $linha): ?>
+                            <tr>
+                                <td><?= (int) $linha[0] ?></td>
+                                <td>Prontuário #<?= (int) $linha[1] ?></td>
+                                <td><?= htmlspecialchars($linha[2]) ?></td>
+                                <td><?= date('d/m/Y', strtotime($linha[3])) ?></td>
+                                <td><?= htmlspecialchars($linha[4]) ?></td>
+                                <td><?= htmlspecialchars($linha[5]) ?></td>
+                                <td>
+                                    <a href="view.avaliacao.update.php?id=<?= (int) $linha[0] ?>" class="btn btn-warning btn-sm">Editar</a>
+                                    <a href="../../controllers/controller.avaliacao.delete.php?id=<?= (int) $linha[0] ?>"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Deseja realmente excluir esta avaliação?')">Excluir</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="7" class="text-center">Nenhuma avaliação cadastrada.</td></tr>
+                    <?php endif; ?>
+                    </tbody>
                 </table>
             </div>
         </div>

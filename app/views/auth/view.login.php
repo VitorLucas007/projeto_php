@@ -16,6 +16,22 @@
                     <div class="alert alert-danger py-2" role="alert">
                         Usuário ou senha incorretos.
                     </div>
+                <?php elseif (isset($_GET['erro']) && $_GET['erro'] === 'pendente'): ?>
+                    <div class="alert alert-warning py-2" role="alert">
+                        Seu cadastro ainda está aguardando aprovação do administrador da unidade.
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_GET['cadastro']) && $_GET['cadastro'] === 'pendente'): ?>
+                    <div class="alert alert-success py-2" role="alert">
+                        Cadastro realizado! Assim que o administrador da unidade aprovar, você poderá entrar.
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_GET['unidade_criada'])): ?>
+                    <div class="alert alert-success py-2" role="alert">
+                        Unidade cadastrada com sucesso! Entre com o e-mail e senha do administrador.
+                    </div>
                 <?php endif; ?>
 
                 <form method="POST" action="../../controllers/controller.login.php" class="mt-4">
@@ -38,6 +54,8 @@
 
                 <div class="mt-4 text-center">
                     <a href="view.cadastro.php" class="text-decoration-none text-secondary small">Ainda não tem conta? Cadastre-se</a>
+                    <br>
+                    <a href="../unidade/view.unidade.create.php" class="text-decoration-none text-secondary small">Cadastrar nova unidade</a>
                 </div>
             </div>
         </div>

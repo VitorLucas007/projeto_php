@@ -12,7 +12,7 @@ $pessoa = new pessoa(
 );
 
 $pessoa->excluirPessoa(
-    $_GET['id']
+    (int) ($_GET['id'] ?? 0)
 );
 
 header(

@@ -9,7 +9,7 @@ $professor = new professor(
 );
 
 $professor->excluirProfessor(
-    $_GET['id']
+    (int) ($_GET['id'] ?? 0)
 );
 
 header(

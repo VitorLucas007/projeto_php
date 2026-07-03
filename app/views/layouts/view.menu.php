@@ -20,13 +20,11 @@ if (session_status() == PHP_SESSION_NONE) {
                     <a class="nav-link" href="../home/view.home.php">Home</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="../crud/view.create.php">Create</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="../crud/view.read.php">Listar</a>
-                </li>
+                <?php if (($_SESSION['fk_perfil'] ?? null) == 1): // ADMIN ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../admin/view.usuarios.pendentes.php">Aprovações Pendentes</a>
+                    </li>
+                <?php endif; ?>
 
             </ul>
 

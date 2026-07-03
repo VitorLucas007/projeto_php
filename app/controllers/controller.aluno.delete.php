@@ -8,7 +8,7 @@ $aluno = new aluno(
 );
 
 $aluno->excluirAluno(
-    $_GET['id']
+    (int) ($_GET['id'] ?? 0)
 );
 
 header(
