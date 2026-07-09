@@ -5,14 +5,16 @@ include_once('model.persistirBD.class.php');
 class unidade
 {
     public $nome;
+    public $cnpj;
     public $endereco;
     public $telefone;
 
-    function __construct($nome, $endereco, $telefone)
+    function __construct($nome, $endereco, $telefone, $cnpj = null)
     {
         $this->nome = $nome;
         $this->endereco = $endereco;
         $this->telefone = $telefone;
+        $this->cnpj = $cnpj;
     }
 
     /**
@@ -22,17 +24,55 @@ class unidade
     function cadastrarUnidade(persistirBD $bd)
     {
         $sql = "
-        INSERT INTO unidade (nome, endereco, telefone, status)
-        VALUES (?, ?, ?, 1)
+        INSERT INTO unidade (nome, cnpj, endereco, telefone, status)
+        VALUES (?, ?, ?, ?, 1)
         ";
 
-        $bd->persistirPreparado($sql, "sss", [
+        $bd->persistirPreparado($sql, "ssss", [
             $this->nome,
+            $this->cnpj,
             $this->endereco,
             $this->telefone
         ]);
 
         return $bd->ultimoId();
+    }
+
+    /**
+     * Busca uma unidade ativa pelo CNPJ (sem formatação).
+     * Retorna a linha [id_unidade, nome, cnpj] ou array vazio se não encontrada.
+     */
+    static function buscarPorCnpj($cnpj)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "SELECT id_unidade, nome, cnpj FROM unidade WHERE cnpj = ? AND status = 1";
+        $bd->persistirPreparado($sql, "s", [$cnpj]);
+
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        return $dados;
+    }
+
+    /**
+     * Verifica se já existe unidade cadastrada com o CNPJ informado.
+     */
+    static function existeCnpj($cnpj)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "SELECT id_unidade FROM unidade WHERE cnpj = ?";
+        $bd->persistirPreparado($sql, "s", [$cnpj]);
+
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        return isset($dados[0]);
     }
 
     static function listarUnidadesAtivas()

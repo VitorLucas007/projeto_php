@@ -1,12 +1,14 @@
 <?php
 
 include_once('../models/model.persistirBD.class.php');
+include_once('../models/model.validacoes.class.php');
 include_once('../models/model.unidade.class.php');
 include_once('../models/model.pessoa.class.php');
 include_once('../models/model.usuario.class.php');
 
 // Campos da unidade
 $nomeUnidade = trim($_POST['unidade_nome'] ?? '');
+$cnpj        = trim($_POST['unidade_cnpj'] ?? '');
 $endereco    = trim($_POST['unidade_endereco'] ?? '');
 $telefone    = trim($_POST['unidade_telefone'] ?? '');
 
@@ -14,10 +16,28 @@ $telefone    = trim($_POST['unidade_telefone'] ?? '');
 $adminNome = trim($_POST['admin_nome'] ?? '');
 $adminEmail = trim($_POST['admin_email'] ?? '');
 $adminSenha = $_POST['admin_senha'] ?? '';
+$adminSenhaConfirma = $_POST['admin_senha_confirma'] ?? '';
 $adminDataNascimento = $_POST['admin_data_nascimento'] ?? '';
 
-if ($nomeUnidade === '' || $adminNome === '' || $adminEmail === '' || $adminSenha === '' || $adminDataNascimento === '') {
+if ($nomeUnidade === '' || $cnpj === '' || $adminNome === '' || $adminEmail === '' || $adminSenha === '' || $adminDataNascimento === '') {
     header("Location: ../views/unidade/view.unidade.create.php?erro=campos");
+    exit;
+}
+
+if (!validacoes::validar_cnpj($cnpj)) {
+    header("Location: ../views/unidade/view.unidade.create.php?erro=cnpj");
+    exit;
+}
+
+$cnpjLimpo = validacoes::remover_formatacao_cnpj($cnpj);
+
+if (unidade::existeCnpj($cnpjLimpo)) {
+    header("Location: ../views/unidade/view.unidade.create.php?erro=cnpj_existe");
+    exit;
+}
+
+if ($adminSenha !== $adminSenhaConfirma) {
+    header("Location: ../views/unidade/view.unidade.create.php?erro=senha");
     exit;
 }
 
@@ -32,7 +52,7 @@ $bd->iniciarTransacao();
 
 try {
 
-    $novaUnidade = new unidade($nomeUnidade, $endereco, $telefone);
+    $novaUnidade = new unidade($nomeUnidade, $endereco, $telefone, $cnpjLimpo);
     $idUnidade = $novaUnidade->cadastrarUnidade($bd);
 
     $pessoaAdmin = new pessoa($adminNome, 'OUTRO', $adminDataNascimento, 'Administrador', '', $adminEmail);

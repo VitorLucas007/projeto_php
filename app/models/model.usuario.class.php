@@ -70,6 +70,62 @@ class usuario
     }
 
     /**
+     * Login do administrador de uma unidade (usado no login por CNPJ).
+     * Busca o usuário ADMIN vinculado à unidade e valida a senha.
+     */
+    static function loginUsuarioPorUnidade($fk_unidade, $senha)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT
+            u.id_usuario,
+            p.nome,
+            p.email,
+            u.senha_hash,
+            u.fk_perfil,
+            u.fk_unidade,
+            u.status_aprovacao
+        FROM usuario u
+        INNER JOIN pessoa p ON p.id_pessoa = u.fk_pessoa
+        WHERE u.fk_unidade = ?
+        AND u.fk_perfil = ?
+        AND u.ativo = 1
+        ";
+
+        $bd->persistirPreparado($sql, "ii", [$fk_unidade, self::PERFIL_ADMIN]);
+
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        if (!isset($dados[0])) {
+            return "NAO_ENCONTRADO";
+        }
+
+        if (!password_verify($senha, $dados[0][3])) {
+            return "SENHA_INCORRETA";
+        }
+
+        if ($dados[0][6] !== 'APROVADO') {
+            return "PENDENTE";
+        }
+
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION['id'] = $dados[0][0];
+        $_SESSION['nome'] = $dados[0][1];
+        $_SESSION['email'] = $dados[0][2];
+        $_SESSION['fk_perfil'] = (int) $dados[0][4];
+        $_SESSION['fk_unidade'] = (int) $dados[0][5];
+
+        return "OK";
+    }
+
+    /**
      * Cria o usuário dentro de uma transação já aberta em $bd, vinculado
      * a uma pessoa que já foi inserida na mesma transação.
      * O hash da senha é gerado aqui dentro, nunca fora do model.

@@ -7,10 +7,13 @@ USE projeto_pibeu;
 CREATE TABLE unidade (
     id_unidade INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
+    cnpj VARCHAR(14) UNIQUE,
     endereco VARCHAR(255),
     telefone VARCHAR(20),
     status BOOLEAN DEFAULT TRUE
 );
+
+CREATE INDEX idx_unidade_cnpj ON unidade(cnpj);
 
 -- TABELA: PERFIL
 -- (Guarda os níveis de acesso estáticos: ADMIN, PROFESSOR, PESSOA)

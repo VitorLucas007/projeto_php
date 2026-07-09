@@ -15,14 +15,18 @@
                             <?php if ($_GET['erro'] === 'campos'): ?>
                                 Preencha todos os campos obrigatórios.
                             <?php elseif ($_GET['erro'] === 'senha'): ?>
-                                A senha do administrador deve ter pelo menos 6 caracteres.
+                                As senhas devem coincidir e ter pelo menos 6 caracteres.
+                            <?php elseif ($_GET['erro'] === 'cnpj'): ?>
+                                CNPJ inválido. Verifique os números digitados.
+                            <?php elseif ($_GET['erro'] === 'cnpj_existe'): ?>
+                                Já existe uma unidade cadastrada com esse CNPJ.
                             <?php else: ?>
                                 Não foi possível concluir o cadastro. Verifique os dados e tente novamente.
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="../../controllers/controller.unidade.create.php">
+                    <form method="POST" action="../../controllers/controller.unidade.create.php" id="formUnidade">
 
                         <h5 class="mt-2">Dados da unidade</h5>
                         <hr class="mt-1">
@@ -33,13 +37,19 @@
                         </div>
 
                         <div class="mb-3">
+                            <label>CNPJ</label>
+                            <input type="text" name="unidade_cnpj" id="unidade_cnpj" class="form-control" placeholder="00.000.000/0000-00" maxlength="18" required>
+                            <div id="cnpj_feedback" class="form-text"></div>
+                        </div>
+
+                        <div class="mb-3">
                             <label>Endereço</label>
                             <input type="text" name="unidade_endereco" class="form-control">
                         </div>
 
                         <div class="mb-3">
                             <label>Telefone</label>
-                            <input type="text" name="unidade_telefone" class="form-control">
+                            <input type="text" name="unidade_telefone" id="unidade_telefone" class="form-control" placeholder="(00) 00000-0000" maxlength="15">
                         </div>
 
                         <h5 class="mt-4">Dados do administrador</h5>
@@ -62,10 +72,16 @@
 
                         <div class="mb-3">
                             <label>Senha</label>
-                            <input type="password" name="admin_senha" class="form-control" minlength="6" required>
+                            <input type="password" name="admin_senha" id="admin_senha" class="form-control" minlength="6" required>
                         </div>
 
-                        <button class="btn btn-success w-100">Cadastrar Unidade e Administrador</button>
+                        <div class="mb-3">
+                            <label>Confirmar senha</label>
+                            <input type="password" name="admin_senha_confirma" id="admin_senha_confirma" class="form-control" minlength="6" required>
+                            <div id="senha_feedback" class="form-text"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100" id="btnCadastrar">Cadastrar Unidade e Administrador</button>
 
                     </form>
 
@@ -78,5 +94,95 @@
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    const cnpjInput = document.getElementById('unidade_cnpj');
+    const cnpjFeedback = document.getElementById('cnpj_feedback');
+    const telefoneInput = document.getElementById('unidade_telefone');
+    const senha = document.getElementById('admin_senha');
+    const senhaConfirma = document.getElementById('admin_senha_confirma');
+    const senhaFeedback = document.getElementById('senha_feedback');
+    const btnCadastrar = document.getElementById('btnCadastrar');
+
+    let cnpjValido = false;
+    let senhasCoincidem = false;
+
+    function atualizarBotao() {
+        btnCadastrar.disabled = !(cnpjValido && senhasCoincidem);
+    }
+
+    cnpjInput.addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 14);
+        v = v.replace(/(\d{2})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1/$2');
+        v = v.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+        e.target.value = v;
+    });
+
+    cnpjInput.addEventListener('blur', function () {
+        const valor = cnpjInput.value.trim();
+
+        if (valor === '') {
+            cnpjFeedback.textContent = '';
+            cnpjValido = false;
+            atualizarBotao();
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('cnpj', valor);
+
+        fetch('../../controllers/controller.validar.cnpj.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.valido) {
+                cnpjFeedback.textContent = '❌ CNPJ inválido.';
+                cnpjFeedback.className = 'form-text text-danger';
+                cnpjValido = false;
+            } else if (data.existe) {
+                cnpjFeedback.textContent = '❌ Este CNPJ já está cadastrado.';
+                cnpjFeedback.className = 'form-text text-danger';
+                cnpjValido = false;
+            } else {
+                cnpjFeedback.textContent = '✅ CNPJ válido.';
+                cnpjFeedback.className = 'form-text text-success';
+                cnpjValido = true;
+            }
+            atualizarBotao();
+        });
+    });
+
+    telefoneInput.addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        v = v.replace(/(\d{2})(\d)/, '($1) $2');
+        v = v.replace(/(\d{5})(\d{1,4})$/, '$1-$2');
+        e.target.value = v;
+    });
+
+    function verificarSenhas() {
+        if (senhaConfirma.value === '') {
+            senhaFeedback.textContent = '';
+            senhasCoincidem = false;
+        } else if (senha.value === senhaConfirma.value && senha.value.length >= 6) {
+            senhaFeedback.textContent = 'Senhas coincidem.';
+            senhaFeedback.className = 'form-text text-success';
+            senhasCoincidem = true;
+        } else {
+            senhaFeedback.textContent = 'Senhas não coincidem.';
+            senhaFeedback.className = 'form-text text-danger';
+            senhasCoincidem = false;
+        }
+        atualizarBotao();
+    }
+
+    senha.addEventListener('input', verificarSenhas);
+    senhaConfirma.addEventListener('input', verificarSenhas);
+})();
+</script>
 
 <?php include_once('../layouts/view.rodape.php'); ?>
