@@ -4,6 +4,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+$perfil = $_SESSION['fk_perfil'] ?? null;
+
+$ehAdmin = ($perfil == 1);
+$ehProfessor = ($perfil == 2);
+$ehAluno = ($perfil == 3);
+
 ?>
 
 <!-- Offcanvas trigger -->
@@ -21,10 +27,21 @@ if (session_status() == PHP_SESSION_NONE) {
   </div>
   <div class="offcanvas-body">
     <div class="list-group">
-      <a href="../pessoa/view.pessoa.php" class="list-group-item list-group-item-action">Pessoa</a>
-      <a href="../professor/view.professor.php" class="list-group-item list-group-item-action">Professor</a>
-      <a href="../aluno/view.aluno.php" class="list-group-item list-group-item-action">Aluno</a>
-      <a href="../avaliacao/view.avaliacao.php" class="list-group-item list-group-item-action">Avaliação</a>
+
+        <?php if ($ehAdmin): ?>
+            <a href="../pessoa/view.pessoa.php" class="list-group-item list-group-item-action">Pessoa</a>
+            <a href="../professor/view.professor.php" class="list-group-item list-group-item-action">Professor</a>
+            <a href="../aluno/view.aluno.php" class="list-group-item list-group-item-action">Aluno</a>
+        <?php endif; ?>
+
+        <?php if ($ehProfessor): ?>
+            <a href="../avaliacao/view.avaliacao.php" class="list-group-item list-group-item-action">Avaliação</a>
+        <?php endif; ?>
+
+        <?php if ($ehAluno): ?>
+            <a href="../avaliacao/view.minhas.avaliacoes.php" class="list-group-item list-group-item-action">Minhas Avaliações</a>
+        <?php endif; ?>
+
     </div>
   </div>
 </div>
