@@ -35,7 +35,6 @@ class usuario
         FROM usuario u
         INNER JOIN pessoa p ON p.id_pessoa = u.fk_pessoa
         WHERE p.email = ?
-        AND u.ativo = 1
         ";
 
         $bd->persistirPreparado($sql, "s", [$this->login]);
