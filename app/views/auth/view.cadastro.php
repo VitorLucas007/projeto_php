@@ -15,6 +15,19 @@ $unidades = unidade::listarUnidadesAtivas();
                 <div class="card-header">
                     <h3>Cadastro</h3>
                     <small class="text-muted">Seu acesso ficará pendente até a aprovação do administrador da unidade.</small>
+
+                    <ul class="nav nav-pills nav-justified mt-3">
+                        <li class="nav-item">
+                            <span class="nav-link active">
+                                <i class="bi bi-person me-1"></i> Pessoa
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a href="../unidade/view.unidade.create.php" class="nav-link">
+                                <i class="bi bi-building me-1"></i> Unidade
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
                 <div class="card-body">
@@ -119,6 +132,10 @@ $unidades = unidade::listarUnidadesAtivas();
                     </form>
 
                     <?php endif; ?>
+
+                    <div class="mt-3 text-center">
+                        <a href="../auth/view.login.php" class="text-decoration-none small">Já tem uma conta? Entrar</a>
+                    </div>
 
                 </div>
 

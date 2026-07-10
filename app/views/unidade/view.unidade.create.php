@@ -7,6 +7,19 @@
                 <div class="card-header">
                     <h3>Cadastrar Unidade</h3>
                     <small class="text-muted">Toda unidade nasce com um administrador responsável.</small>
+
+                    <ul class="nav nav-pills nav-justified mt-3">
+                        <li class="nav-item">
+                            <a href="../auth/view.cadastro.php" class="nav-link">
+                                <i class="bi bi-person me-1"></i> Pessoa
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-link active">
+                                <i class="bi bi-building me-1"></i> Unidade
+                            </span>
+                        </li>
+                    </ul>
                 </div>
                 <div class="card-body">
 
