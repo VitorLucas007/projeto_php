@@ -1,9 +1,12 @@
 <?php include_once('../layouts/view.cabecalho.php'); ?>
 
-<div class="container-fluid vh-100 login-page">
+<div class="container-fluid vh-100 login-page p-0 m-0" style="background: url('../../../public/assets/img/login-bg.png') no-repeat center center / cover;">
     <div class="row g-0 h-100">
-        <div class="col-lg-4 d-flex align-items-center justify-content-center">
-            <div class="login-card card shadow border-0 p-4 p-sm-5 w-100 mx-3">
+        
+        <!-- Formulário posicionado sobre a área clara da imagem -->
+        <div class="col-12 col-md-6 col-lg-4 d-flex align-items-center justify-content-center h-100">
+            <!-- Trocado bg-opacity-75 para bg-white (sem transparência no mobile/desktop) com uma sombra reforçada (shadow-lg) -->
+            <div class="login-card card shadow-lg border-0 p-4 p-sm-5 w-100 mx-3 mx-sm-5 bg-white rounded-4">
                 <div class="mb-4 text-center">
                     <div class="logo badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-4 py-2 mb-3">
                         <i class="bi bi-heart-pulse-fill me-2"></i> SGA
@@ -61,11 +64,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-8 d-none d-lg-block overflow-hidden">
-            <div class="h-100 bg-image">
-                <img src="../../../public/assets/img/doodle-login.png" alt="Ilustração de gestão acadêmica" class="img-fluid w-100 h-100 object-fit-cover">
-            </div>
-        </div>
+
     </div>
 </div>
 
