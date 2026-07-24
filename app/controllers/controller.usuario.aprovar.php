@@ -4,8 +4,11 @@ session_start();
 
 include_once('../models/model.usuario.class.php');
 
-// Só admin logado pode aprovar/rejeitar, e só da própria unidade
-if (!isset($_SESSION['id']) || ($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_ADMIN) {
+$perfilLogado = $_SESSION['fk_perfil'] ?? null;
+
+// Só ADMIN (aprova sua própria unidade) ou ROOT (aprova admins de qualquer
+// unidade) podem aprovar/rejeitar contas
+if (!isset($_SESSION['id']) || !in_array($perfilLogado, [usuario::PERFIL_ADMIN, usuario::PERFIL_ROOT], true)) {
     header("Location: ../views/auth/view.login.php");
     exit;
 }
@@ -19,5 +22,10 @@ if ($id > 0 && $acao === 'aprovar') {
     usuario::rejeitar($id);
 }
 
-header("Location: ../views/admin/view.usuarios.pendentes.php");
+if ($perfilLogado == usuario::PERFIL_ROOT) {
+    header("Location: ../views/root/view.root.admins.pendentes.php");
+} else {
+    header("Location: ../views/admin/view.usuarios.pendentes.php");
+}
+
 exit;

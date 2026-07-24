@@ -66,12 +66,12 @@ try {
         $idUnidade,
         $adminEmail,
         $adminSenha,
-        'APROVADO' // o admin fundador da unidade já nasce aprovado
+        'PENDENTE' // o admin fundador da unidade agora depende de aprovação do Root
     );
 
     $bd->confirmarTransacao();
 
-    header("Location: ../views/auth/view.login.php?unidade_criada=1");
+    header("Location: ../views/auth/view.login.php?unidade_pendente=1");
 
 } catch (\Throwable $e) {
     $bd->desfazerTransacao();
