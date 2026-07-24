@@ -187,6 +187,38 @@ class avaliacao
         $bd->desconectar();
     }
 
+    /**
+     * Lista somente as avaliações do aluno logado (via fk_pessoa da sessão).
+     */
+    static function listarAvaliacoesPorPessoa($fk_pessoa)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT
+            a.id_avaliacao,
+            pr.id_prontuario,
+            pe.nome,
+            a.data_avaliacao,
+            a.frequencia_cardiaca,
+            a.pressao_arterial
+        FROM avaliacao a
+        INNER JOIN prontuario pr ON pr.id_prontuario = a.fk_prontuario
+        INNER JOIN aluno al ON al.id_aluno = pr.fk_aluno
+        INNER JOIN professor pf ON pf.id_professor = a.fk_professor
+        INNER JOIN pessoa pe ON pe.id_pessoa = pf.fk_pessoa
+        WHERE al.fk_pessoa = ?
+        ORDER BY a.id_avaliacao DESC
+        ";
+
+        $bd->persistirPreparado($sql, "i", [$fk_pessoa]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+        return $dados;
+    }
+
     static function listarProntuarios()
     {
         $bd = new persistirBD();

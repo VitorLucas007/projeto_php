@@ -26,7 +26,8 @@ CREATE TABLE perfil (
 INSERT INTO perfil (id_perfil, nome_perfil) VALUES 
 (1, 'ADMIN'), 
 (2, 'PROFESSOR'), 
-(3, 'PESSOA');
+(3, 'PESSOA'),
+(4, 'ROOT'); -- superusuário: aprova/recusa as unidades e admins cadastrados
 
 -- TABELA: PESSOA
 -- (Centraliza os dados cadastrais básicos e anamnese de qualquer indivíduo físico)
@@ -174,4 +175,29 @@ CREATE TABLE mensagens (
     
     CONSTRAINT fk_mensagem_emissor FOREIGN KEY (fk_emissor) REFERENCES usuario(id_usuario),
     CONSTRAINT fk_mensagem_receptor FOREIGN KEY (fk_receptor) REFERENCES usuario(id_usuario)
+);
+
+-- ==========================================================================
+-- MOCK: USUÁRIO ROOT (superusuário)
+-- Fica acima do Admin: aprova ou recusa as unidades/admins cadastrados.
+-- Login: RootUser | Senha: root123
+-- Hash abaixo gerado com password_hash('root123', PASSWORD_DEFAULT)
+-- ==========================================================================
+
+-- Unidade "de sistema" só para satisfazer o vínculo obrigatório fk_unidade do Root
+INSERT INTO unidade (nome, cnpj, endereco, telefone, status)
+VALUES ('Unidade Sistema (Root)', NULL, NULL, NULL, TRUE);
+
+INSERT INTO pessoa (nome, sexo, data_nascimento, profissao, contato, email, estilo_vida, atividade_fisica, tabagismo, alcool)
+VALUES ('Root', 'OUTRO', '2000-01-01', 'Superusuário', NULL, 'RootUser', NULL, NULL, 0, 0);
+
+INSERT INTO usuario (fk_pessoa, fk_perfil, fk_unidade, login, senha_hash, status_aprovacao, ativo)
+VALUES (
+    (SELECT id_pessoa FROM pessoa WHERE email = 'RootUser'),
+    4, -- ROOT
+    (SELECT id_unidade FROM unidade WHERE nome = 'Unidade Sistema (Root)'),
+    'RootUser',
+    '$2b$10$//MnlyAuohvNYeFPSknYXuTakqmUE2O6MQ9OhWOd0CR1yfJlGaydm', -- root123
+    'APROVADO',
+    1
 );

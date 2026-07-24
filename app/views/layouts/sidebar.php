@@ -9,6 +9,7 @@ $perfil = $_SESSION['fk_perfil'] ?? null;
 $ehAdmin = ($perfil == 1);
 $ehProfessor = ($perfil == 2);
 $ehAluno = ($perfil == 3);
+$ehRoot = ($perfil == 4);
 
 ?>
 
@@ -40,6 +41,10 @@ $ehAluno = ($perfil == 3);
 
         <?php if ($ehAluno): ?>
             <a href="../avaliacao/view.minhas.avaliacoes.php" class="list-group-item list-group-item-action">Minhas Avaliações</a>
+        <?php endif; ?>
+
+        <?php if ($ehRoot): ?>
+            <a href="../root/view.root.admins.pendentes.php" class="list-group-item list-group-item-action">Unidades Pendentes</a>
         <?php endif; ?>
 
     </div>

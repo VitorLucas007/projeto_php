@@ -26,6 +26,12 @@ if (session_status() == PHP_SESSION_NONE) {
                     </li>
                 <?php endif; ?>
 
+                <?php if (($_SESSION['fk_perfil'] ?? null) == 4): // ROOT ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../root/view.root.admins.pendentes.php">Unidades Pendentes</a>
+                    </li>
+                <?php endif; ?>
+
             </ul>
 
             <ul class="navbar-nav">

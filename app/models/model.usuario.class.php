@@ -11,6 +11,7 @@ class usuario
     const PERFIL_ADMIN = 1;
     const PERFIL_PROFESSOR = 2;
     const PERFIL_PESSOA = 3; // usado aqui como "ALUNO"
+    const PERFIL_ROOT = 4; // superusuário: aprova/recusa as contas de ADMIN criadas por unidade
 
     function __construct($login = null, $senha = null)
     {
@@ -31,7 +32,8 @@ class usuario
             u.senha_hash,
             u.fk_perfil,
             u.fk_unidade,
-            u.status_aprovacao
+            u.status_aprovacao,
+            u.fk_pessoa
         FROM usuario u
         INNER JOIN pessoa p ON p.id_pessoa = u.fk_pessoa
         WHERE p.email = ?
@@ -64,6 +66,7 @@ class usuario
         $_SESSION['email'] = $dados[0][2];
         $_SESSION['fk_perfil'] = (int) $dados[0][4];
         $_SESSION['fk_unidade'] = (int) $dados[0][5];
+        $_SESSION['fk_pessoa'] = (int) $dados[0][7];
 
         return "OK";
     }
@@ -178,6 +181,37 @@ class usuario
         ";
 
         $bd->persistirPreparado($sql, "i", [$fk_unidade]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+        return $dados;
+    }
+
+    /**
+     * Lista contas de ADMIN pendentes de aprovação, de todas as unidades.
+     * Usado exclusivamente pelo Root, que fica acima do admin de cada unidade.
+     */
+    static function listarPendentesAdmin()
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT
+            u.id_usuario,
+            p.nome,
+            p.email,
+            un.nome,
+            u.created_at
+        FROM usuario u
+        INNER JOIN pessoa p ON p.id_pessoa = u.fk_pessoa
+        INNER JOIN unidade un ON un.id_unidade = u.fk_unidade
+        WHERE u.status_aprovacao = 'PENDENTE'
+        AND u.fk_perfil = " . self::PERFIL_ADMIN . "
+        ORDER BY u.created_at
+        ";
+
+        $bd->persistir($sql);
         $dados = $bd->retornoConsultas();
 
         $bd->desconectar();

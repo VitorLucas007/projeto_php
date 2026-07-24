@@ -80,7 +80,18 @@ class unidade
         $bd = new persistirBD();
         $bd->conectar();
 
-        $sql = "SELECT id_unidade, nome FROM unidade WHERE status = 1 ORDER BY nome";
+        // Exclui unidades usadas exclusivamente pelo perfil ROOT (fk_perfil = 4),
+        // que existem apenas para satisfazer o vínculo obrigatório fk_unidade do usuário Root
+        // e não devem ser tratadas como unidades "reais" cadastradas no sistema.
+        $sql = "
+            SELECT id_unidade, nome
+            FROM unidade
+            WHERE status = 1
+              AND id_unidade NOT IN (
+                  SELECT fk_unidade FROM usuario WHERE fk_perfil = 4
+              )
+            ORDER BY nome
+        ";
 
         $bd->persistir($sql);
 
