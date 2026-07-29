@@ -5,6 +5,7 @@ include_once('../models/model.pessoa.class.php');
 include_once('../models/model.usuario.class.php');
 include_once('../models/model.professor.class.php');
 include_once('../models/model.aluno.class.php');
+include_once('../models/model.validacoes.class.php');
 
 $nome = trim($_POST['cad_nome'] ?? '');
 $email = trim($_POST['cad_email'] ?? '');
@@ -19,6 +20,7 @@ $tipoPerfil = $_POST['cad_tipo'] ?? ''; // "PROFESSOR" ou "ALUNO"
 $cref = trim($_POST['cad_cref'] ?? '');
 $especialidade = trim($_POST['cad_especialidade'] ?? '');
 $observacoes = trim($_POST['cad_observacoes'] ?? '');
+$cpf = trim($_POST['cad_cpf'] ?? '');
 
 if ($nome === '' || $email === '' || $senha === '' || $sexo === '' || $dataNascimento === '' || $fkUnidade <= 0) {
     header("Location: ../views/auth/view.cadastro.php?erro=campos");
@@ -35,6 +37,16 @@ if (!in_array($tipoPerfil, ['PROFESSOR', 'ALUNO'], true)) {
     exit;
 }
 
+$cpfLimpo = null;
+
+if ($tipoPerfil === 'ALUNO') {
+    if (!validacoes::validar_cpf($cpf)) {
+        header("Location: ../views/auth/view.cadastro.php?erro=cpf");
+        exit;
+    }
+    $cpfLimpo = validacoes::remover_formatacao_cpf($cpf);
+}
+
 $fkPerfil = ($tipoPerfil === 'PROFESSOR') ? usuario::PERFIL_PROFESSOR : usuario::PERFIL_PESSOA;
 
 $bd = new persistirBD();
@@ -43,7 +55,7 @@ $bd->iniciarTransacao();
 
 try {
 
-    $novaPessoa = new pessoa($nome, $sexo, $dataNascimento, '', $contato, $email);
+    $novaPessoa = new pessoa($nome, $sexo, $dataNascimento, '', $contato, $email, $cpfLimpo);
     $idPessoa = $novaPessoa->cadastrarPessoaTx($bd);
 
     $novoUsuario = new usuario();

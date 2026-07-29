@@ -10,7 +10,7 @@ include_once('../../models/model.professor.class.php');
 
 $professor = new professor('', '', '');
 
-$professores = $professor->listarProfessores();
+$professores = $professor->listarProfessores($_SESSION['fk_unidade']);
 ?>
 
 <?php include_once('../layouts/view.cabecalho.php'); ?>
@@ -24,12 +24,6 @@ $professores = $professor->listarProfessores();
         <div class="card-header d-flex justify-content-between align-items-center">
 
             <h2>Gerenciamento de Professores</h2>
-
-            <a
-                href="view.professor.create.php"
-                class="btn btn-success btn-sm">
-                Novo Professor
-            </a>
 
         </div>
 

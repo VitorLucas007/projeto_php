@@ -188,6 +188,22 @@ class usuario
     }
 
     /**
+     * Conta Professor/Aluno pendentes de uma unidade, pro badge do Admin.
+     */
+    static function contarPendentes($fk_unidade)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "SELECT COUNT(*) FROM usuario WHERE status_aprovacao = 'PENDENTE' AND fk_unidade = ?";
+        $bd->persistirPreparado($sql, "i", [$fk_unidade]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+        return (int) ($dados[0][0] ?? 0);
+    }
+
+    /**
      * Lista contas de ADMIN pendentes de aprovação, de todas as unidades.
      * Usado exclusivamente pelo Root, que fica acima do admin de cada unidade.
      */
@@ -218,6 +234,24 @@ class usuario
         return $dados;
     }
 
+    /**
+     * Conta unidades/admins pendentes, pro badge do Root. Unidade e Admin
+     * nascem sempre juntos (controller.unidade.create.php), então essa
+     * contagem já cobre os dois.
+     */
+    static function contarPendentesAdmin()
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "SELECT COUNT(*) FROM usuario WHERE status_aprovacao = 'PENDENTE' AND fk_perfil = " . self::PERFIL_ADMIN;
+        $bd->persistir($sql);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+        return (int) ($dados[0][0] ?? 0);
+    }
+
     static function aprovar($id_usuario)
     {
         $bd = new persistirBD();
@@ -229,13 +263,45 @@ class usuario
         $bd->desconectar();
     }
 
+    /**
+     * Professor/Aluno recusados são excluídos por completo (pessoa + usuario
+     * + professor/aluno + prontuario, via ON DELETE CASCADE a partir de
+     * pessoa), pra não deixar lixo de cadastros nunca aprovados. Admin
+     * recusado mantém o comportamento tradicional (só marca REJEITADO),
+     * já que essa decisão é do Root e segue o padrão já usado em
+     * view.root.admins.pendentes.php.
+     */
     static function rejeitar($id_usuario)
     {
         $bd = new persistirBD();
         $bd->conectar();
 
-        $sql = "UPDATE usuario SET status_aprovacao = 'REJEITADO', ativo = 0 WHERE id_usuario = ?";
+        $sql = "SELECT fk_pessoa, fk_perfil FROM usuario WHERE id_usuario = ?";
         $bd->persistirPreparado($sql, "i", [$id_usuario]);
+        $dados = $bd->retornoConsultas();
+
+        if (!isset($dados[0])) {
+            $bd->desconectar();
+            return;
+        }
+
+        [$fkPessoa, $fkPerfil] = $dados[0];
+
+        if (in_array((int) $fkPerfil, [self::PERFIL_PROFESSOR, self::PERFIL_PESSOA], true)) {
+            $bd->iniciarTransacao();
+
+            try {
+                $sql = "DELETE FROM pessoa WHERE id_pessoa = ?";
+                $bd->persistirPreparado($sql, "i", [$fkPessoa]);
+                $bd->confirmarTransacao();
+            } catch (\Throwable $e) {
+                $bd->desfazerTransacao();
+                throw $e;
+            }
+        } else {
+            $sql = "UPDATE usuario SET status_aprovacao = 'REJEITADO', ativo = 0 WHERE id_usuario = ?";
+            $bd->persistirPreparado($sql, "i", [$id_usuario]);
+        }
 
         $bd->desconectar();
     }

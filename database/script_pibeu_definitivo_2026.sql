@@ -2,8 +2,7 @@ DROP DATABASE IF EXISTS projeto_pibeu;
 CREATE DATABASE IF NOT EXISTS projeto_pibeu;
 USE projeto_pibeu;
 
--- TABELA: UNIDADE
--- (As filiais/polos devem ser criadas antes dos usuários, pois todos precisam se vincular a uma)
+
 CREATE TABLE unidade (
     id_unidade INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -15,22 +14,20 @@ CREATE TABLE unidade (
 
 CREATE INDEX idx_unidade_cnpj ON unidade(cnpj);
 
--- TABELA: PERFIL
--- (Guarda os níveis de acesso estáticos: ADMIN, PROFESSOR, PESSOA)
+
 CREATE TABLE perfil (
     id_perfil INT AUTO_INCREMENT PRIMARY KEY,
     nome_perfil VARCHAR(50) NOT NULL UNIQUE
 );
 
--- Carga inicial obrigatória de perfis
+
 INSERT INTO perfil (id_perfil, nome_perfil) VALUES 
 (1, 'ADMIN'), 
 (2, 'PROFESSOR'), 
 (3, 'PESSOA'),
-(4, 'ROOT'); -- superusuário: aprova/recusa as unidades e admins cadastrados
+(4, 'ROOT'); -- superusuário: mock no banco.
 
--- TABELA: PESSOA
--- (Centraliza os dados cadastrais básicos e anamnese de qualquer indivíduo físico)
+
 CREATE TABLE pessoa (
     id_pessoa INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
@@ -43,11 +40,11 @@ CREATE TABLE pessoa (
     atividade_fisica VARCHAR(150),
     tabagismo BOOLEAN,
     alcool BOOLEAN,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    cpf VARCHAR(11) UNIQUE
 );
 
--- TABELA: USUARIO
--- (Gerencia as credenciais de login, o perfil de acesso e o vínculo obrigatório com a Unidade)
+
 CREATE TABLE usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     fk_pessoa INT NOT NULL UNIQUE,
@@ -67,8 +64,7 @@ CREATE TABLE usuario (
     CONSTRAINT fk_usuario_unidade FOREIGN KEY (fk_unidade) REFERENCES unidade(id_unidade)
 );
 
--- TABELA: PROFESSOR
--- (Guarda informações específicas complementares ao usuário do tipo Professor)
+
 CREATE TABLE professor (
     id_professor INT AUTO_INCREMENT PRIMARY KEY,
     fk_pessoa INT NOT NULL UNIQUE,
@@ -78,8 +74,7 @@ CREATE TABLE professor (
     CONSTRAINT fk_professor_pessoa FOREIGN KEY (fk_pessoa) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE
 );
 
--- TABELA: ALUNO
--- (Guarda informações específicas complementares ao usuário do tipo Aluno/Pessoa)
+
 CREATE TABLE aluno (
     id_aluno INT AUTO_INCREMENT PRIMARY KEY,
     fk_pessoa INT NOT NULL UNIQUE,
@@ -88,7 +83,7 @@ CREATE TABLE aluno (
     CONSTRAINT fk_aluno_pessoa FOREIGN KEY (fk_pessoa) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE
 );
 
--- TABELA: PRONTUARIO
+
 CREATE TABLE prontuario (
     id_prontuario INT AUTO_INCREMENT PRIMARY KEY,
     fk_aluno INT NOT NULL UNIQUE,
@@ -98,7 +93,7 @@ CREATE TABLE prontuario (
     CONSTRAINT fk_prontuario_aluno FOREIGN KEY (fk_aluno) REFERENCES aluno(id_aluno) ON DELETE CASCADE
 );
 
--- TABELA: AVALIACAO
+
 CREATE TABLE avaliacao (
     id_avaliacao INT AUTO_INCREMENT PRIMARY KEY,
     fk_prontuario INT NOT NULL,
@@ -177,26 +172,19 @@ CREATE TABLE mensagens (
     CONSTRAINT fk_mensagem_receptor FOREIGN KEY (fk_receptor) REFERENCES usuario(id_usuario)
 );
 
--- ==========================================================================
--- MOCK: USUÁRIO ROOT (superusuário)
--- Fica acima do Admin: aprova ou recusa as unidades/admins cadastrados.
--- Login: RootUser | Senha: root123
--- Hash abaixo gerado com password_hash('root123', PASSWORD_DEFAULT)
--- ==========================================================================
 
--- Unidade "de sistema" só para satisfazer o vínculo obrigatório fk_unidade do Root
 INSERT INTO unidade (nome, cnpj, endereco, telefone, status)
 VALUES ('Unidade Sistema (Root)', NULL, NULL, NULL, TRUE);
 
 INSERT INTO pessoa (nome, sexo, data_nascimento, profissao, contato, email, estilo_vida, atividade_fisica, tabagismo, alcool)
-VALUES ('Root', 'OUTRO', '2000-01-01', 'Superusuário', NULL, 'RootUser', NULL, NULL, 0, 0);
+VALUES ('Root', 'OUTRO', '2000-01-01', 'Superusuário', NULL, 'root@user.com', NULL, NULL, 0, 0);
 
 INSERT INTO usuario (fk_pessoa, fk_perfil, fk_unidade, login, senha_hash, status_aprovacao, ativo)
 VALUES (
-    (SELECT id_pessoa FROM pessoa WHERE email = 'RootUser'),
+    (SELECT id_pessoa FROM pessoa WHERE email = 'root@user.com'),
     4, -- ROOT
     (SELECT id_unidade FROM unidade WHERE nome = 'Unidade Sistema (Root)'),
-    'RootUser',
+    'root@user.com',
     '$2b$10$//MnlyAuohvNYeFPSknYXuTakqmUE2O6MQ9OhWOd0CR1yfJlGaydm', -- root123
     'APROVADO',
     1

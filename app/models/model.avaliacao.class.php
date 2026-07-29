@@ -219,6 +219,64 @@ class avaliacao
         return $dados;
     }
 
+    /**
+     * Histórico de avaliações de um aluno, de qualquer professor (sem
+     * filtrar por fk_professor), ordenado por data.
+     */
+    static function listarPorAluno($id_aluno)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT
+            a.id_avaliacao,
+            pr.id_prontuario,
+            pe.nome,
+            a.data_avaliacao,
+            a.frequencia_cardiaca,
+            a.pressao_arterial
+        FROM avaliacao a
+        INNER JOIN prontuario pr ON pr.id_prontuario = a.fk_prontuario
+        INNER JOIN professor pf ON pf.id_professor = a.fk_professor
+        INNER JOIN pessoa pe ON pe.id_pessoa = pf.fk_pessoa
+        WHERE pr.fk_aluno = ?
+        ORDER BY a.data_avaliacao DESC
+        ";
+
+        $bd->persistirPreparado($sql, "i", [$id_aluno]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+        return $dados;
+    }
+
+    /**
+     * Resolve o id_pessoa dono (aluno) de uma avaliação, pra checagem de
+     * posse na tela de detalhe somente-leitura.
+     */
+    static function buscarFkPessoaAluno($id_avaliacao)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT pe.id_pessoa
+        FROM avaliacao a
+        INNER JOIN prontuario pr ON pr.id_prontuario = a.fk_prontuario
+        INNER JOIN aluno al ON al.id_aluno = pr.fk_aluno
+        INNER JOIN pessoa pe ON pe.id_pessoa = al.fk_pessoa
+        WHERE a.id_avaliacao = ?
+        ";
+
+        $bd->persistirPreparado($sql, "i", [$id_avaliacao]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        return isset($dados[0][0]) ? (int) $dados[0][0] : null;
+    }
+
     static function listarProntuarios()
     {
         $bd = new persistirBD();
@@ -229,25 +287,6 @@ class avaliacao
         FROM prontuario pr
         INNER JOIN aluno al ON al.id_aluno = pr.fk_aluno
         INNER JOIN pessoa pe ON pe.id_pessoa = al.fk_pessoa
-        ORDER BY pe.nome
-        ";
-
-        $bd->persistir($sql);
-        $dados = $bd->retornoConsultas();
-
-        $bd->desconectar();
-        return $dados;
-    }
-
-    static function listarProfessores()
-    {
-        $bd = new persistirBD();
-        $bd->conectar();
-
-        $sql = "
-        SELECT pf.id_professor, pe.nome
-        FROM professor pf
-        INNER JOIN pessoa pe ON pe.id_pessoa = pf.fk_pessoa
         ORDER BY pe.nome
         ";
 

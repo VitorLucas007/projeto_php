@@ -8,15 +8,15 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-// Página exclusiva do aluno: cada um só pode ver as próprias avaliações
-if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PESSOA) {
+if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../home/view.home.php");
     exit;
 }
 
 include_once('../../models/model.avaliacao.class.php');
 
-$dados = avaliacao::listarAvaliacoesPorPessoa($_SESSION['fk_pessoa']);
+$idAluno = (int) ($_GET['id'] ?? 0);
+$dados = avaliacao::listarPorAluno($idAluno);
 ?>
 
 <?php include_once('../layouts/view.cabecalho.php'); ?>
@@ -26,7 +26,8 @@ $dados = avaliacao::listarAvaliacoesPorPessoa($_SESSION['fk_pessoa']);
 <div class="container mt-4">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h2>Minhas Avaliações Físicas</h2>
+            <h2>Histórico de Avaliações</h2>
+            <a href="view.avaliacao.alunos.php" class="btn btn-secondary btn-sm">Voltar</a>
         </div>
         <div class="card-body">
             <div class="table-responsive">

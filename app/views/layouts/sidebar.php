@@ -30,13 +30,13 @@ $ehRoot = ($perfil == 4);
     <div class="list-group">
 
         <?php if ($ehAdmin): ?>
-            <a href="../pessoa/view.pessoa.php" class="list-group-item list-group-item-action">Pessoa</a>
             <a href="../professor/view.professor.php" class="list-group-item list-group-item-action">Professor</a>
             <a href="../aluno/view.aluno.php" class="list-group-item list-group-item-action">Aluno</a>
         <?php endif; ?>
 
         <?php if ($ehProfessor): ?>
             <a href="../avaliacao/view.avaliacao.php" class="list-group-item list-group-item-action">Avaliação</a>
+            <a href="../avaliacao/view.avaliacao.alunos.php" class="list-group-item list-group-item-action">Alunos</a>
         <?php endif; ?>
 
         <?php if ($ehAluno): ?>
@@ -45,6 +45,7 @@ $ehRoot = ($perfil == 4);
 
         <?php if ($ehRoot): ?>
             <a href="../root/view.root.admins.pendentes.php" class="list-group-item list-group-item-action">Unidades Pendentes</a>
+            <a href="../pessoa/view.pessoa.php" class="list-group-item list-group-item-action">Pessoas</a>
         <?php endif; ?>
 
     </div>

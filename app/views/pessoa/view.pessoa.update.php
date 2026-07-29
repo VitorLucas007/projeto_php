@@ -7,6 +7,13 @@ if (!isset($_SESSION['id'])) {
     exit;
 }
 
+include_once('../../models/model.usuario.class.php');
+
+if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_ROOT) {
+    header("Location: ../home/view.home.php");
+    exit;
+}
+
 include_once('../../models/model.pessoa.class.php');
 
 $pessoa = new pessoa(

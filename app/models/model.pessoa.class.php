@@ -10,6 +10,7 @@ class pessoa
     public $profissao;
     public $contato;
     public $email;
+    public $cpf;
 
     function __construct(
         $nome,
@@ -17,7 +18,8 @@ class pessoa
         $data_nascimento,
         $profissao,
         $contato,
-        $email
+        $email,
+        $cpf = null
     ) {
         $this->nome = $nome;
         $this->sexo = $sexo;
@@ -25,6 +27,7 @@ class pessoa
         $this->profissao = $profissao;
         $this->contato = $contato;
         $this->email = $email;
+        $this->cpf = $cpf;
     }
 
     /**
@@ -36,18 +39,19 @@ class pessoa
     {
         $sql = "
         INSERT INTO pessoa
-            (nome, sexo, data_nascimento, profissao, contato, email)
+            (nome, sexo, data_nascimento, profissao, contato, email, cpf)
         VALUES
-            (?, ?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?, ?, ?)
         ";
 
-        $bd->persistirPreparado($sql, "ssssss", [
+        $bd->persistirPreparado($sql, "sssssss", [
             $this->nome,
             $this->sexo,
             $this->data_nascimento,
             $this->profissao,
             $this->contato,
-            $this->email
+            $this->email,
+            $this->cpf
         ]);
 
         return $bd->ultimoId();
@@ -110,6 +114,24 @@ class pessoa
         ]);
 
         $bd->desconectar();
+    }
+
+    /**
+     * Verifica se já existe pessoa cadastrada com o CPF informado.
+     */
+    static function existeCpf($cpf)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "SELECT id_pessoa FROM pessoa WHERE cpf = ?";
+        $bd->persistirPreparado($sql, "s", [$cpf]);
+
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        return isset($dados[0]);
     }
 
     function excluirPessoa($id)

@@ -10,7 +10,7 @@ include_once('../../models/model.aluno.class.php');
 
 $aluno = new aluno('', '');
 
-$alunos = $aluno->listarAlunos();
+$alunos = $aluno->listarAlunos($_SESSION['fk_unidade']);
 ?>
 
 <?php include_once('../layouts/view.cabecalho.php'); ?>
@@ -24,12 +24,6 @@ $alunos = $aluno->listarAlunos();
         <div class="card-header d-flex justify-content-between align-items-center">
 
             <h2>Gerenciamento de Alunos</h2>
-
-            <a
-                href="view.aluno.create.php"
-                class="btn btn-success btn-sm">
-                Novo Aluno
-            </a>
 
         </div>
 

@@ -47,6 +47,8 @@ $unidades = unidade::listarUnidadesAtivas();
                                 A senha deve ter pelo menos 6 caracteres.
                             <?php elseif ($_GET['erro'] === 'tipo'): ?>
                                 Selecione se você é Professor ou Aluno.
+                            <?php elseif ($_GET['erro'] === 'cpf'): ?>
+                                CPF inválido. Verifique os números digitados.
                             <?php else: ?>
                                 Não foi possível concluir o cadastro. Verifique os dados e tente novamente.
                             <?php endif; ?>
@@ -122,12 +124,17 @@ $unidades = unidade::listarUnidadesAtivas();
 
                         <div id="campos_aluno" style="display:none;">
                             <div class="mb-3">
+                                <label>CPF</label>
+                                <input type="text" name="cad_cpf" id="cad_cpf" class="form-control" placeholder="000.000.000-00" maxlength="14">
+                                <div id="cpf_feedback" class="form-text"></div>
+                            </div>
+                            <div class="mb-3">
                                 <label>Observações</label>
                                 <textarea name="cad_observacoes" class="form-control"></textarea>
                             </div>
                         </div>
 
-                        <button class="btn btn-success w-100">Cadastrar</button>
+                        <button class="btn btn-success w-100" id="btnCadastrar">Cadastrar</button>
 
                     </form>
 
@@ -152,7 +159,69 @@ function alternarCampos() {
     const tipo = document.getElementById('cad_tipo').value;
     document.getElementById('campos_professor').style.display = (tipo === 'PROFESSOR') ? 'block' : 'none';
     document.getElementById('campos_aluno').style.display = (tipo === 'ALUNO') ? 'block' : 'none';
+    if (typeof atualizarBotaoCadastro === 'function') atualizarBotaoCadastro();
 }
+
+(function () {
+    const cpfInput = document.getElementById('cad_cpf');
+    const cpfFeedback = document.getElementById('cpf_feedback');
+    const btnCadastrar = document.getElementById('btnCadastrar');
+    const tipoSelect = document.getElementById('cad_tipo');
+
+    if (!cpfInput || !cpfFeedback || !btnCadastrar || !tipoSelect) return;
+
+    let cpfValido = false;
+
+    function atualizarBotaoCadastro() {
+        const precisaCpf = tipoSelect.value === 'ALUNO';
+        btnCadastrar.disabled = precisaCpf && !cpfValido;
+    }
+    window.atualizarBotaoCadastro = atualizarBotaoCadastro;
+
+    cpfInput.addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        e.target.value = v;
+    });
+
+    cpfInput.addEventListener('blur', function () {
+        const valor = cpfInput.value.trim();
+
+        if (valor === '') {
+            cpfFeedback.textContent = '';
+            cpfValido = false;
+            atualizarBotaoCadastro();
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('cpf', valor);
+
+        fetch('../../controllers/controller.validar.cpf.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.valido) {
+                cpfFeedback.textContent = '❌ CPF inválido.';
+                cpfFeedback.className = 'form-text text-danger';
+                cpfValido = false;
+            } else if (data.existe) {
+                cpfFeedback.textContent = '❌ Este CPF já está cadastrado.';
+                cpfFeedback.className = 'form-text text-danger';
+                cpfValido = false;
+            } else {
+                cpfFeedback.textContent = '✅ CPF válido.';
+                cpfFeedback.className = 'form-text text-success';
+                cpfValido = true;
+            }
+            atualizarBotaoCadastro();
+        });
+    });
+})();
 </script>
 
 <?php include_once('../layouts/view.rodape.php'); ?>

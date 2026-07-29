@@ -28,26 +28,7 @@ class aluno
         return $idAluno;
     }
 
-    function cadastrarAluno()
-    {
-        $bd = new persistirBD();
-        $bd->conectar();
-        $bd->iniciarTransacao();
-
-        try {
-            $id = $this->cadastrarAlunoTx($bd);
-            $bd->confirmarTransacao();
-        } catch (\Throwable $e) {
-            $bd->desfazerTransacao();
-            throw $e;
-        } finally {
-            $bd->desconectar();
-        }
-
-        return $id;
-    }
-
-    function listarAlunos()
+    function listarAlunos($fk_unidade)
     {
         $bd = new persistirBD();
         $bd->conectar();
@@ -56,10 +37,12 @@ class aluno
         SELECT a.id_aluno, p.nome, a.observacoes
         FROM aluno a
         INNER JOIN pessoa p ON p.id_pessoa = a.fk_pessoa
+        INNER JOIN usuario u ON u.fk_pessoa = p.id_pessoa
+        WHERE u.status_aprovacao = 'APROVADO' AND u.fk_unidade = ?
         ORDER BY p.nome
         ";
 
-        $bd->persistir($sql);
+        $bd->persistirPreparado($sql, "i", [$fk_unidade]);
         $dados = $bd->retornoConsultas();
 
         $bd->desconectar();
@@ -102,23 +85,5 @@ class aluno
         $bd->persistirPreparado($sql, "i", [$id]);
 
         $bd->desconectar();
-    }
-
-    function listarPessoasDisponiveis()
-    {
-        $bd = new persistirBD();
-        $bd->conectar();
-
-        $sql = "
-        SELECT id_pessoa, nome FROM pessoa
-        WHERE id_pessoa NOT IN (SELECT fk_pessoa FROM aluno)
-        ORDER BY nome
-        ";
-
-        $bd->persistir($sql);
-        $dados = $bd->retornoConsultas();
-
-        $bd->desconectar();
-        return $dados;
     }
 }
