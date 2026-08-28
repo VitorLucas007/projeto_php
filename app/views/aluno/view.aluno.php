@@ -74,15 +74,14 @@ $alunos = $aluno->listarAlunos($_SESSION['fk_unidade']);
                                             onclick="return confirm('Deseja excluir este aluno?')">
                                             Excluir
                                         </a>
-
                                     </td>
 
                                 </tr>
 
-                        <?php
+                            <?php
                             }
                         } else {
-                        ?>
+                            ?>
 
                             <tr>
                                 <td colspan="4" class="text-center">

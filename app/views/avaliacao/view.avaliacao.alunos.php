@@ -42,7 +42,7 @@ $alunos = $aluno->listarAlunos($_SESSION['fk_unidade']);
                         <tr>
                             <th>Nome</th>
                             <th>Observações</th>
-                            <th width="180">Ações</th>
+                            <th width="260">Ações</th>
                         </tr>
                     </thead>
 
@@ -53,9 +53,14 @@ $alunos = $aluno->listarAlunos($_SESSION['fk_unidade']);
                                 <td><?= htmlspecialchars($linha[1]) ?></td>
                                 <td><?= htmlspecialchars($linha[2]) ?></td>
                                 <td>
-                                    <a href="view.avaliacoes.por.aluno.php?id=<?= (int) $linha[0] ?>" class="btn btn-primary btn-sm">
-                                        Ver avaliações
-                                    </a>
+                                    <div class="d-flex gap-2">
+                                        <a href="view.avaliacoes.por.aluno.php?id=<?= (int) $linha[0] ?>" class="btn btn-primary btn-sm">
+                                            Ver avaliações
+                                        </a>
+                                        <a href="../treino/view.ficha.treino.php?id=<?= (int) $linha[0] ?>" class="btn btn-info btn-sm text-white">
+                                            <i class="bi bi-card-list"></i> Ver Ficha
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
