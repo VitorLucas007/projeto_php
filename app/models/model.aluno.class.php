@@ -86,4 +86,22 @@ class aluno
 
         $bd->desconectar();
     }
+
+    public static function buscarPorPessoa($fk_pessoa) {
+        $bd = new persistirBD();
+        $bd->conectar();
+        
+        $sql = "SELECT id_aluno FROM aluno WHERE fk_pessoa = ?";
+        $bd->persistirPreparado($sql, "i", [$fk_pessoa]);
+        $resultado = $bd->retornoConsultas();
+        
+        $id_aluno = 0;
+        if (is_array($resultado) && isset($resultado[0]) && is_array($resultado[0])) {
+            $linha = $resultado[0];
+            $id_aluno = (int) ($linha['id_aluno'] ?? $linha[0] ?? 0);
+        }
+        
+        $bd->desconectar();
+        return $id_aluno;
+    }
 }
