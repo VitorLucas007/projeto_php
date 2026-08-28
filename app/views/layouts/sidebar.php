@@ -41,6 +41,7 @@ $ehRoot = ($perfil == 4);
 
         <?php if ($ehAluno): ?>
             <a href="../avaliacao/view.minhas.avaliacoes.php" class="list-group-item list-group-item-action">Minhas Avaliações</a>
+            <a href="../treino/view.ficha.treino.php" class="list-group-item list-group-item-action">Meus Treinos</a>
         <?php endif; ?>
 
         <?php if ($ehRoot): ?>
