@@ -167,3 +167,25 @@ $dis = $readonly ? 'disabled' : '';
         </div>
     <?php endforeach; ?>
 </div>
+
+<h5 class="mt-4">Bioimpedância</h5>
+<hr class="mt-1">
+<div class="row">
+    <?php
+    $bioimpedancia = [
+        'peso'                  => ['Peso (kg)', 'ex: 70.50'],
+        'percentual_gordura'    => ['% Gordura corporal', 'ex: 18.50'],
+        'massa_magra'           => ['Massa magra (kg)', 'ex: 57.30'],
+        'massa_muscular'        => ['Massa muscular (kg)', 'ex: 32.10'],
+        'agua_corporal'         => ['Água corporal (%)', 'ex: 55.00'],
+        'imc'                   => ['IMC', 'ex: 23.40'],
+        'taxa_metabolica_basal' => ['Taxa metabólica basal (kcal)', 'ex: 1650'],
+    ];
+    foreach ($bioimpedancia as $chave => [$rotulo, $placeholder]):
+    ?>
+        <div class="col-md-3 mb-3">
+            <label><?= $rotulo ?></label>
+            <input type="number" step="0.01" name="<?= $chave ?>" class="form-control" placeholder="<?= $placeholder ?>" value="<?= campo($v, $chave) ?>" <?= $dis ?>>
+        </div>
+    <?php endforeach; ?>
+</div>

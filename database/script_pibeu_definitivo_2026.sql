@@ -133,7 +133,15 @@ CREATE TABLE avaliacao (
     coxa_esquerda DECIMAL(5,2),
     panturrilha_direita DECIMAL(5,2),
     panturrilha_esquerda DECIMAL(5,2),
-    
+
+    peso DECIMAL(5,2),
+    percentual_gordura DECIMAL(5,2),
+    massa_magra DECIMAL(5,2),
+    massa_muscular DECIMAL(5,2),
+    agua_corporal DECIMAL(5,2),
+    imc DECIMAL(5,2),
+    taxa_metabolica_basal DECIMAL(6,2),
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     CONSTRAINT fk_avaliacao_prontuario FOREIGN KEY (fk_prontuario) REFERENCES prontuario(id_prontuario),
@@ -158,6 +166,33 @@ CREATE TABLE prescricao (
     data_prescricao DATE NOT NULL,
     
     CONSTRAINT fk_prescricao_laudo FOREIGN KEY (fk_laudo) REFERENCES laudo(id_laudo) ON DELETE CASCADE
+);
+
+-- TABELA: FICHA_TREINO
+CREATE TABLE ficha_treino (
+    id_ficha INT AUTO_INCREMENT PRIMARY KEY,
+    fk_aluno INT NOT NULL,
+    fk_professor INT NOT NULL,
+    nome_treino VARCHAR(100) NOT NULL,
+    data_criacao DATE NOT NULL,
+    data_validade DATE,
+    observacoes TEXT,
+
+    CONSTRAINT fk_ficha_treino_aluno FOREIGN KEY (fk_aluno) REFERENCES aluno(id_aluno) ON DELETE CASCADE,
+    CONSTRAINT fk_ficha_treino_professor FOREIGN KEY (fk_professor) REFERENCES professor(id_professor)
+);
+
+-- TABELA: EXERCICIO_TREINO
+CREATE TABLE exercicio_treino (
+    id_exercicio INT AUTO_INCREMENT PRIMARY KEY,
+    fk_ficha INT NOT NULL,
+    nome_maquina_exercicio VARCHAR(100) NOT NULL,
+    series INT NOT NULL,
+    repeticoes VARCHAR(30) NOT NULL,
+    carga VARCHAR(30) NOT NULL,
+    tempo_descanso VARCHAR(30) NOT NULL,
+
+    CONSTRAINT fk_exercicio_treino_ficha FOREIGN KEY (fk_ficha) REFERENCES ficha_treino(id_ficha) ON DELETE CASCADE
 );
 
 -- TABELA: MENSAGENS

@@ -45,8 +45,11 @@ $readonly = true;
 
 <div class="container mt-4 mb-5">
     <div class="card shadow">
-        <div class="card-header">
-            <h2>Avaliação Física #<?= (int) $v['id_avaliacao'] ?> (somente leitura)</h2>
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h2 class="mb-0">Avaliação Física #<?= (int) $v['id_avaliacao'] ?> (somente leitura)</h2>
+            <a href="view.avaliacao.imprimir.php?id=<?= (int) $v['id_avaliacao'] ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="bi bi-printer"></i> Imprimir / Exportar PDF
+            </a>
         </div>
         <div class="card-body">
             <?php include('partial.campos.php'); ?>
