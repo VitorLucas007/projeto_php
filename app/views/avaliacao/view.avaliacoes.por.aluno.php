@@ -25,9 +25,19 @@ $dados = avaliacao::listarPorAluno($idAluno);
 
 <div class="container mt-4">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h2>Histórico de Avaliações</h2>
-            <a href="view.avaliacao.alunos.php" class="btn btn-secondary btn-sm">Voltar</a>
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h2 class="mb-0">Histórico de Avaliações</h2>
+            <div class="d-flex gap-2">
+                <a href="view.avaliacao.create.php" class="btn btn-success btn-sm">
+                    <i class="bi bi-plus-circle"></i> Nova avaliação
+                </a>
+                <?php if (count($dados) >= 2): ?>
+                    <a href="view.avaliacao.comparativo.php?id_aluno=<?= $idAluno ?>" class="btn btn-primary btn-sm">
+                        <i class="bi bi-bar-chart-line"></i> Comparar avaliações
+                    </a>
+                <?php endif; ?>
+                <a href="view.avaliacao.alunos.php" class="btn btn-secondary btn-sm">Voltar</a>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">

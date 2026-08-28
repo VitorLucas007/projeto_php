@@ -27,6 +27,11 @@ $dados = avaliacao::listarAvaliacoesPorPessoa($_SESSION['fk_pessoa']);
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h2>Minhas Avaliações Físicas</h2>
+            <?php if (count($dados) >= 2): ?>
+                <a href="view.avaliacao.comparativo.php" class="btn btn-primary btn-sm">
+                    <i class="bi bi-bar-chart-line"></i> Comparar meu progresso
+                </a>
+            <?php endif; ?>
         </div>
         <div class="card-body">
             <div class="table-responsive">

@@ -17,7 +17,10 @@ include_once('../../models/model.avaliacao.class.php');
 include_once('../../models/model.professor.class.php');
 
 $prontuarios = avaliacao::listarProntuarios();
-$v = ['fk_professor' => professor::buscarPorPessoa($_SESSION['fk_pessoa'])];
+$v = [
+    'fk_professor' => professor::buscarPorPessoa($_SESSION['fk_pessoa']),
+    'fk_prontuario' => $_GET['fk_prontuario'] ?? '',
+];
 $nomeProfessorResponsavel = $_SESSION['nome'];
 ?>
 

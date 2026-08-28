@@ -45,6 +45,14 @@ class avaliacao
         'coxa_esquerda'             => 'd',
         'panturrilha_direita'       => 'd',
         'panturrilha_esquerda'      => 'd',
+
+        'peso'                      => 'd',
+        'percentual_gordura'        => 'd',
+        'massa_magra'               => 'd',
+        'massa_muscular'            => 'd',
+        'agua_corporal'             => 'd',
+        'imc'                       => 'd',
+        'taxa_metabolica_basal'     => 'd',
     ];
 
     // Campos que são checkbox (boolean) — marcam 0 quando ausentes no POST,
@@ -252,6 +260,38 @@ class avaliacao
     }
 
     /**
+     * Histórico completo (todos os campos, não só o resumo de listagem) das
+     * avaliações de um aluno, já como array associativo cada uma — usado no
+     * dashboard comparativo. Ordenado da mais antiga pra mais nova.
+     */
+    static function listarCompletoPorAluno($id_aluno)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT a.*
+        FROM avaliacao a
+        INNER JOIN prontuario pr ON pr.id_prontuario = a.fk_prontuario
+        WHERE pr.fk_aluno = ?
+        ORDER BY a.data_avaliacao ASC, a.id_avaliacao ASC
+        ";
+
+        $bd->persistirPreparado($sql, "i", [$id_aluno]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        if (empty($dados)) {
+            return [];
+        }
+
+        $colunas = array_merge(['id_avaliacao'], array_keys(self::$campos), ['created_at']);
+
+        return array_map(fn($linha) => array_combine($colunas, $linha), $dados);
+    }
+
+    /**
      * Resolve o id_pessoa dono (aluno) de uma avaliação, pra checagem de
      * posse na tela de detalhe somente-leitura.
      */
@@ -275,6 +315,30 @@ class avaliacao
         $bd->desconectar();
 
         return isset($dados[0][0]) ? (int) $dados[0][0] : null;
+    }
+
+    /**
+     * Nome do aluno (pessoa) a partir do id_aluno — usado nos cabeçalhos
+     * do histórico, comparativo e impressão.
+     */
+    static function buscarNomeAluno($id_aluno)
+    {
+        $bd = new persistirBD();
+        $bd->conectar();
+
+        $sql = "
+        SELECT pe.nome
+        FROM aluno al
+        INNER JOIN pessoa pe ON pe.id_pessoa = al.fk_pessoa
+        WHERE al.id_aluno = ?
+        ";
+
+        $bd->persistirPreparado($sql, "i", [$id_aluno]);
+        $dados = $bd->retornoConsultas();
+
+        $bd->desconectar();
+
+        return $dados[0][0] ?? null;
     }
 
     static function listarProntuarios()
