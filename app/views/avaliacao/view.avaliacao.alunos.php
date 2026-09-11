@@ -57,6 +57,9 @@ $alunos = $aluno->listarAlunos($_SESSION['fk_unidade']);
                                         <a href="view.avaliacoes.por.aluno.php?id=<?= (int) $linha[0] ?>" class="btn btn-primary btn-sm">
                                             Ver avaliações
                                         </a>
+                                        <a href="../composicao/view.composicoes.por.aluno.php?id=<?= (int) $linha[0] ?>" class="btn btn-success btn-sm">
+                                            <i class="bi bi-clipboard2-pulse"></i> Composição Corporal
+                                        </a>
                                         <a href="../treino/view.ficha.treino.php?id=<?= (int) $linha[0] ?>" class="btn btn-info btn-sm text-white">
                                             <i class="bi bi-card-list"></i> Ver Ficha
                                         </a>

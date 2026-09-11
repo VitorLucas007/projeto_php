@@ -47,9 +47,16 @@ $readonly = true;
     <div class="card shadow">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h2 class="mb-0">Avaliação Física #<?= (int) $v['id_avaliacao'] ?> (somente leitura)</h2>
-            <a href="view.avaliacao.imprimir.php?id=<?= (int) $v['id_avaliacao'] ?>" class="btn btn-outline-primary btn-sm" target="_blank">
-                <i class="bi bi-printer"></i> Imprimir / Exportar PDF
-            </a>
+            <div class="d-flex gap-2 flex-wrap">
+                <?php if ($perfil == usuario::PERFIL_PROFESSOR): ?>
+                    <a href="../composicao/view.composicao.create.php?fk_avaliacao=<?= (int) $v['id_avaliacao'] ?>" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-clipboard2-pulse"></i> Nova Ficha de Composição Corporal
+                    </a>
+                <?php endif; ?>
+                <a href="view.avaliacao.imprimir.php?id=<?= (int) $v['id_avaliacao'] ?>" class="btn btn-outline-primary btn-sm" target="_blank">
+                    <i class="bi bi-printer"></i> Imprimir / Exportar PDF
+                </a>
+            </div>
         </div>
         <div class="card-body">
             <?php include('partial.campos.php'); ?>

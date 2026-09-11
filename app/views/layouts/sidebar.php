@@ -37,10 +37,12 @@ $ehRoot = ($perfil == 4);
         <?php if ($ehProfessor): ?>
             <a href="../avaliacao/view.avaliacao.php" class="list-group-item list-group-item-action">Avaliação</a>
             <a href="../avaliacao/view.avaliacao.alunos.php" class="list-group-item list-group-item-action">Alunos</a>
+            <a href="../composicao/view.composicoes.por.aluno.php" class="list-group-item list-group-item-action">Composição Corporal</a>
         <?php endif; ?>
 
         <?php if ($ehAluno): ?>
             <a href="../avaliacao/view.minhas.avaliacoes.php" class="list-group-item list-group-item-action">Minhas Avaliações</a>
+            <a href="../composicao/view.minhas.composicoes.php" class="list-group-item list-group-item-action">Minha Composição Corporal</a>
             <a href="../treino/view.ficha.treino.php" class="list-group-item list-group-item-action">Meus Treinos</a>
         <?php endif; ?>
 
