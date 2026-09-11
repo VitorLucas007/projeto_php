@@ -1,7 +1,5 @@
--- Migração: cria a tabela ficha_composicao_corporal (ficha detalhada de
--- bioimpedância, estilo InBody, preenchida pelo professor e vinculada a
--- uma avaliação física já existente — o verso da impressão reaproveita a
--- anamnese e as medidas já cadastradas na avaliação vinculada).
+-- Migração: cria a tabela ficha_composicao_corporal (ficha de bioimpedância,
+-- estilo InBody, vinculada a uma avaliação já existente).
 -- Rodar em bancos já existentes (quem for criar o banco do zero, já usa
 -- o script_pibeu_definitivo_2026.sql atualizado e não precisa rodar isso).
 

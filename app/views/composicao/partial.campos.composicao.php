@@ -1,12 +1,6 @@
 <?php
-/**
- * Partial com os campos do formulário de Ficha de Composição Corporal.
- * Espera no escopo de quem inclui:
- *   $v         => array associativo com valores atuais (vazio para create)
- *   $contexto  => array de ficha_composicao::buscarContextoAvaliacao() (aluno, sexo, data_nascimento, cintura, quadril)
- *   $nomeProfessorResponsavel => nome exibido no campo travado de professor
- *   $readonly  => opcional; quando true, todos os campos ficam desabilitados
- */
+// Espera $v (valores atuais), $contexto (ficha_composicao::buscarContextoAvaliacao),
+// $nomeProfessorResponsavel e $readonly (opcional).
 function campoFC($v, $chave) {
     return htmlspecialchars($v[$chave] ?? '');
 }

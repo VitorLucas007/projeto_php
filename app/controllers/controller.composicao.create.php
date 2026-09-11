@@ -23,8 +23,7 @@ if (!$contexto) {
 // O professor responsável é sempre o da sessão, nunca o valor vindo do POST.
 $_POST['fk_professor'] = professor::buscarPorPessoa($_SESSION['fk_pessoa']);
 
-// Medidas da avaliação vinculada, usadas só pra recalcular a relação
-// cintura-quadril no servidor — não são colunas da ficha.
+// Não são colunas da ficha, só entrada pro recalcular() achar a relação cintura-quadril.
 $_POST['_cintura_avaliacao'] = $contexto['cintura'];
 $_POST['_quadril_avaliacao'] = $contexto['quadril'];
 

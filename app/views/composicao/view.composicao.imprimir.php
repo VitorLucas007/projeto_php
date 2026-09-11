@@ -50,11 +50,7 @@ function simNaoFC($valor)
     return (!empty($valor) && $valor != 0) ? 'Sim' : 'Não';
 }
 
-/**
- * Posição (0-100%) do marcador na barra estilo InBody, com a faixa normal
- * centralizada e uma margem de 60% da amplitude pra cada lado — só pra
- * leitura visual, não é a curva proprietária da InBody.
- */
+// Posição (0-100%) do marcador na barra, com margem de 60% pra cada lado. Aproximação visual.
 function barraFaixa($valor, $min, $max)
 {
     if ($valor === null || $min === null || $max === null || $valor === '' || $min === '' || $max === '') {

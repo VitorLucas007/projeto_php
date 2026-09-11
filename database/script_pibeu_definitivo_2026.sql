@@ -149,9 +149,7 @@ CREATE TABLE avaliacao (
 );
 
 -- TABELA: FICHA_COMPOSICAO_CORPORAL
--- Ficha detalhada de bioimpedância (estilo InBody), preenchida pelo
--- professor e vinculada a uma avaliação física já existente — o verso da
--- impressão reaproveita a anamnese e as medidas da avaliação vinculada.
+-- Ficha de bioimpedância (estilo InBody), vinculada a uma avaliação já existente.
 CREATE TABLE ficha_composicao_corporal (
     id_ficha INT AUTO_INCREMENT PRIMARY KEY,
     fk_avaliacao INT NOT NULL,
@@ -333,15 +331,11 @@ VALUES (
 -- ============================================================================
 -- MOCKS DE DEMONSTRAÇÃO
 -- Unidades, admins, professores, alunos, avaliações, fichas de composição
--- corporal e fichas de treino, só pra ter um banco populado pra visualizar
--- todas as telas do sistema sem precisar cadastrar tudo manualmente.
+-- corporal e fichas de treino, pra ter o banco populado sem cadastrar tudo na mão.
 --
--- Todo usuário mockado (admin/professor/aluno) usa a MESMA senha: 123senha
--- O login sempre é feito pelo e-mail (ver usuario::loginUsuario, que
--- consulta por pessoa.email — a coluna usuario.login não é usada no login,
--- mas é preenchida igual ao e-mail por consistência).
+-- Senha igual pra todo mundo: 123senha. Login é pelo e-mail.
 --
--- Lista de logins mockados (senha "123senha" para todos, inclusive o Root):
+-- Logins mockados:
 --   ROOT
 --     root@user.com
 --   ADMIN

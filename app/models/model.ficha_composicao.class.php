@@ -2,20 +2,11 @@
 
 include_once('model.persistirBD.class.php');
 
-/**
- * Ficha de Composição Corporal — ficha detalhada de bioimpedância (estilo
- * InBody), preenchida pelo professor e vinculada a uma avaliação física já
- * existente (fk_avaliacao). O verso impresso (anamnese + medidas) reaproveita
- * os dados já cadastrados na avaliação vinculada, então essa tabela guarda
- * apenas os dados de composição corporal em si.
- */
+// Ficha de bioimpedância (estilo InBody), vinculada a uma avaliação já
+// existente. O verso impresso reaproveita anamnese/medidas da avaliação.
 class ficha_composicao
 {
-    /**
-     * Mapa central de colunas -> tipo de bind (mysqli), no mesmo padrão do
-     * model de avaliação: qualquer coluna nova na tabela só precisa ser
-     * adicionada aqui.
-     */
+    // Mapa coluna -> tipo de bind, mesmo padrão do model de avaliação.
     public static $campos = [
         'fk_avaliacao'                    => 'i',
         'fk_professor'                    => 'i',
@@ -112,11 +103,7 @@ class ficha_composicao
 
     public $dados = [];
 
-    /**
-     * @param array $dadosPost Array associativo (tipicamente $_POST), já
-     * passado por self::recalcular() para garantir que os campos calculados
-     * fiquem consistentes mesmo que o JS do formulário não tenha rodado.
-     */
+    // $dadosPost normalmente já passou por self::recalcular() antes de chegar aqui.
     function __construct(array $dadosPost)
     {
         foreach (self::$campos as $campo => $tipo) {
@@ -182,10 +169,6 @@ class ficha_composicao
         $bd->desconectar();
     }
 
-    /**
-     * Retorna a ficha como array associativo, pronta pra popular o
-     * formulário de edição ou a impressão.
-     */
     static function buscarPorId($id)
     {
         $bd = new persistirBD();
@@ -217,9 +200,7 @@ class ficha_composicao
         $bd->desconectar();
     }
 
-    /**
-     * Fichas já cadastradas para uma avaliação específica (normalmente 0 ou 1).
-     */
+    // Fichas já cadastradas pra uma avaliação (normalmente 0 ou 1).
     static function listarPorAvaliacao($fk_avaliacao)
     {
         $bd = new persistirBD();
@@ -236,10 +217,7 @@ class ficha_composicao
         return $dados;
     }
 
-    /**
-     * Listagem resumida das fichas de um aluno (todas as avaliações dele),
-     * mais recente primeiro — usada nas telas de listagem.
-     */
+    // Listagem resumida das fichas de um aluno, mais recente primeiro.
     static function listarPorAluno($id_aluno)
     {
         $bd = new persistirBD();
@@ -265,10 +243,7 @@ class ficha_composicao
         return $dados;
     }
 
-    /**
-     * Histórico completo (todos os campos) das fichas de um aluno, da mais
-     * antiga pra mais nova — usado no gráfico de evolução.
-     */
+    // Histórico completo das fichas de um aluno, da mais antiga pra mais nova.
     static function listarCompletoPorAluno($id_aluno)
     {
         $bd = new persistirBD();
@@ -297,10 +272,7 @@ class ficha_composicao
         return array_map(fn($linha) => array_combine($colunas, $linha), $dados);
     }
 
-    /**
-     * Resolve o id_pessoa dono (aluno) de uma ficha, pra checagem de posse
-     * nas telas de detalhe/impressão restritas ao próprio aluno.
-     */
+    // id_pessoa dono da ficha, pra checagem de posse nas telas do aluno.
     static function buscarFkPessoaAluno($id_ficha)
     {
         $bd = new persistirBD();
@@ -324,11 +296,7 @@ class ficha_composicao
         return isset($dados[0][0]) ? (int) $dados[0][0] : null;
     }
 
-    /**
-     * Dados base da avaliação vinculada, usados pra pré-preencher o
-     * formulário (nome do aluno, sexo/data de nascimento pra idade e TMB,
-     * cintura/quadril já medidos pra sugerir a relação cintura-quadril).
-     */
+    // Dados da avaliação vinculada, usados pra pré-preencher o formulário.
     static function buscarContextoAvaliacao($fk_avaliacao)
     {
         $bd = new persistirBD();
@@ -366,18 +334,10 @@ class ficha_composicao
         ];
     }
 
-    /**
-     * Recalcula, no servidor, todos os campos derivados a partir dos dados
-     * brutos recebidos — mesma lógica de public/assets/js/composicao-calculos.js,
-     * espelhada em PHP. Isso garante que a ficha salva no banco fique
-     * consistente mesmo que o JavaScript do formulário não tenha rodado
-     * (client desatualizado, POST manual, futura importação automática da
-     * balança etc). Valores calculados vindos do POST são sempre
-     * sobrescritos; os campos que não têm fórmula pública confiável
-     * (água/proteína/minerais, score geral, ângulo de fase, nível de
-     * gordura visceral e todas as faixas normais) continuam sendo os que o
-     * professor digitou.
-     */
+    // Recalcula os campos derivados no servidor (espelha composicao-calculos.js),
+    // sobrescrevendo o que veio no POST. Campos sem fórmula pública (água,
+    // proteína, minerais, score, ângulo de fase, gordura visceral, faixas
+    // normais) continuam como o professor digitou.
     static function recalcular(array $dados)
     {
         $peso = self::numOuNull($dados['peso'] ?? null);

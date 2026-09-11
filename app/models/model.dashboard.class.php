@@ -2,20 +2,11 @@
 
 include_once('model.persistirBD.class.php');
 
-/**
- * Consultas agregadas usadas só pelos cards/gráficos da home (dashboard por
- * perfil). Ficam centralizadas aqui — em vez de espalhadas pelos models de
- * cada entidade — porque são leituras específicas dessa tela, não operações
- * de CRUD do domínio.
- */
+// Consultas agregadas dos cards/gráficos da home. Ficam aqui, fora dos
+// models de cada entidade, por serem específicas dessa tela.
 class dashboard
 {
-    /**
-     * Cards + lista do dashboard do professor: alunos ativos da unidade,
-     * avaliações que ele mesmo fez no mês corrente, e os alunos da unidade
-     * sem avaliação registrada nos últimos $diasSemAvaliacao dias (ou nunca
-     * avaliados).
-     */
+    // Alunos ativos, avaliações do mês e alunos sem avaliação há $diasSemAvaliacao dias.
     static function statsProfessor($fk_professor, $fk_unidade, $diasSemAvaliacao = 60)
     {
         $bd = new persistirBD();
@@ -65,10 +56,7 @@ class dashboard
         ];
     }
 
-    /**
-     * IMC e %gordura da avaliação mais recente de cada aluno ativo da
-     * unidade — alimenta o gráfico de distribuição da carteira.
-     */
+    // IMC e %gordura da última avaliação de cada aluno ativo da unidade.
     static function distribuicaoImcPorUnidade($fk_unidade)
     {
         $bd = new persistirBD();
@@ -98,11 +86,7 @@ class dashboard
         return $dados;
     }
 
-    /**
-     * Cards do dashboard do admin: alunos e professores ativos da unidade,
-     * mais os cadastros pendentes de aprovação (reaproveita
-     * usuario::contarPendentes).
-     */
+    // Alunos e professores ativos da unidade.
     static function statsAdmin($fk_unidade)
     {
         $bd = new persistirBD();
@@ -136,11 +120,7 @@ class dashboard
         ];
     }
 
-    /**
-     * Novas matrículas de aluno por mês, nos últimos $meses meses, pra
-     * alimentar o gráfico de crescimento do admin. Meses sem nenhuma
-     * matrícula entram com 0 (não somem do gráfico).
-     */
+    // Novas matrículas por mês nos últimos $meses meses (meses sem matrícula entram com 0).
     static function matriculasPorMes($fk_unidade, $meses = 6)
     {
         $bd = new persistirBD();
@@ -173,10 +153,7 @@ class dashboard
         return $resultado;
     }
 
-    /**
-     * Cards do dashboard do Root: total de unidades "reais" (exclui a
-     * unidade dummy do próprio Root) e admins pendentes de aprovação.
-     */
+    // Total de unidades reais (exclui a unidade dummy do Root) e admins pendentes.
     static function statsRoot()
     {
         include_once('model.unidade.class.php');
@@ -188,10 +165,7 @@ class dashboard
         ];
     }
 
-    /**
-     * Resumo do dashboard do aluno: ficha de treino ativa (a mais recente
-     * ainda dentro da validade) e a última avaliação registrada.
-     */
+    // Ficha de treino ativa do aluno (mais recente ainda dentro da validade).
     static function resumoAluno($id_aluno)
     {
         $bd = new persistirBD();
