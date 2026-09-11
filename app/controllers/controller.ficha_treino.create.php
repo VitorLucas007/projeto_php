@@ -70,12 +70,12 @@ try {
     $bd->confirmarTransacao();
     
     // Redireciona de volta para a ficha recém-criada (ajustado para a pasta "aluno")
-    header("Location: ../views/aluno/view.ficha_treino.php?id=$fk_aluno&sucesso=1");
+    header("Location: ../views/treino/view.ficha.treino.php?id=$fk_aluno&sucesso=1");
 
 } catch (\Throwable $e) {
     $bd->desfazerTransacao();
     error_log("Erro ao salvar ficha de treino: " . $e->getMessage());
-    header("Location: ../views/aluno/view.ficha_treino.create.php?id_aluno=$fk_aluno&erro=geral");
+    header("Location: ../views/treino/view.ficha_treino.create.php?id_aluno=$fk_aluno&erro=geral");
 } finally {
     $bd->desconectar();
 }
