@@ -10,7 +10,7 @@ if (!isset($_SESSION['id'])) {
 include_once('../../models/model.usuario.class.php');
 include_once('../../models/model.dashboard.class.php');
 
-$perfil = (int) ($_SESSION['fk_perfil'] ?? 0);
+$perfil = (int) (isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : 0);
 
 $statsProfessor = null;
 $distribuicaoImc = null;
@@ -52,7 +52,7 @@ if ($perfil === usuario::PERFIL_PROFESSOR) {
 function mesAbreviado($anoMes)
 {
     $meses = ['01'=>'Jan','02'=>'Fev','03'=>'Mar','04'=>'Abr','05'=>'Mai','06'=>'Jun','07'=>'Jul','08'=>'Ago','09'=>'Set','10'=>'Out','11'=>'Nov','12'=>'Dez'];
-    [$ano, $mes] = explode('-', $anoMes);
+    list($ano, $mes) = explode('-', $anoMes);
     return $meses[$mes] . '/' . substr($ano, 2);
 }
 ?>
@@ -156,7 +156,7 @@ function mesAbreviado($anoMes)
         <?php
         $ultima = !empty($historicoAluno) ? end($historicoAluno) : null;
         $penultima = count($historicoAluno) >= 2 ? $historicoAluno[count($historicoAluno) - 2] : null;
-        $ficha = $statsAluno['ficha_treino_ativa'] ?? null;
+        $ficha = isset($statsAluno['ficha_treino_ativa']) ? $statsAluno['ficha_treino_ativa'] : null;
         ?>
 
         <div class="row g-3 mb-4">

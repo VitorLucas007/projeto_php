@@ -8,14 +8,14 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
+if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../home/view.home.php");
     exit;
 }
 
 include_once('../../models/model.avaliacao.class.php');
 
-$idAluno = (int) ($_GET['id'] ?? 0);
+$idAluno = (int) (isset($_GET['id']) ? $_GET['id'] : 0);
 $dados = avaliacao::listarPorAluno($idAluno);
 ?>
 

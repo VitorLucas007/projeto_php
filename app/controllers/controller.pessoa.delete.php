@@ -4,7 +4,7 @@ session_start();
 
 include_once('../models/model.usuario.class.php');
 
-if (!isset($_SESSION['id']) || ($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_ROOT) {
+if (!isset($_SESSION['id']) || (isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_ROOT) {
     header("Location: ../views/auth/view.login.php");
     exit;
 }
@@ -21,7 +21,7 @@ $pessoa = new pessoa(
 );
 
 $pessoa->excluirPessoa(
-    (int) ($_GET['id'] ?? 0)
+    (int) (isset($_GET['id']) ? $_GET['id'] : 0)
 );
 
 header(

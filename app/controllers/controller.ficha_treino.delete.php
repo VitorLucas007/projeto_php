@@ -8,8 +8,8 @@ if (!isset($_SESSION['id']) || !in_array($_SESSION['fk_perfil'], [1, 2])) {
 
 include_once('../models/model.persistirBD.class.php');
 
-$id_ficha = (int) ($_GET['id_ficha'] ?? 0);
-$id_aluno = (int) ($_GET['id_aluno'] ?? 0);
+$id_ficha = (int) (isset($_GET['id_ficha']) ? $_GET['id_ficha'] : 0);
+$id_aluno = (int) (isset($_GET['id_aluno']) ? $_GET['id_aluno'] : 0);
 
 if ($id_ficha > 0) {
     $bd = new persistirBD();

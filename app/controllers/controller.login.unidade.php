@@ -4,8 +4,8 @@ include_once('../models/model.validacoes.class.php');
 include_once('../models/model.unidade.class.php');
 include_once('../models/model.usuario.class.php');
 
-$cnpj = trim($_POST['login_cnpj'] ?? '');
-$senha = $_POST['login_senha'] ?? '';
+$cnpj = trim(isset($_POST['login_cnpj']) ? $_POST['login_cnpj'] : '');
+$senha = isset($_POST['login_senha']) ? $_POST['login_senha'] : '';
 
 if ($cnpj === '' || $senha === '' || !validacoes::validar_cnpj($cnpj)) {
     header("Location: ../views/auth/view.login.php?erro_unidade=1");

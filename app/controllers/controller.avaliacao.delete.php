@@ -2,7 +2,7 @@
 
 include_once('../models/model.avaliacao.class.php');
 
-$id = (int) ($_GET['id'] ?? 0);
+$id = (int) (isset($_GET['id']) ? $_GET['id'] : 0);
 
 if ($id > 0) {
     avaliacao::excluirAvaliacao($id);

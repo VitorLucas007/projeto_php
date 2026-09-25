@@ -4,10 +4,10 @@ class persistirBD
 {
     // Credenciais centralizadas aqui (ideal seria em .env fora do webroot,
     // mas para o escopo do projeto isso já elimina a duplicação em cada model)
-    private const DB_HOST = "127.0.0.1";
-    private const DB_USER = "root";
-    private const DB_PASS = "";
-    private const DB_NAME = "projeto_pibeu";
+    const DB_HOST = "127.0.0.1";
+    const DB_USER = "root";
+    const DB_PASS = "";
+    const DB_NAME = "projeto_pibeu";
 
     protected $db;
     protected $resultado;

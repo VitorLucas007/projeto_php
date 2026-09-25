@@ -20,7 +20,8 @@ class dashboard
             "i",
             [$fk_unidade]
         );
-        $alunosAtivos = (int) ($bd->retornoConsultas()[0][0] ?? 0);
+        $alunosAtivosResultado = $bd->retornoConsultas();
+        $alunosAtivos = (int) (isset($alunosAtivosResultado[0][0]) ? $alunosAtivosResultado[0][0] : 0);
 
         $bd->persistirPreparado(
             "SELECT COUNT(*) FROM avaliacao
@@ -29,7 +30,8 @@ class dashboard
             "i",
             [$fk_professor]
         );
-        $avaliacoesNoMes = (int) ($bd->retornoConsultas()[0][0] ?? 0);
+        $avaliacoesNoMesResultado = $bd->retornoConsultas();
+        $avaliacoesNoMes = (int) (isset($avaliacoesNoMesResultado[0][0]) ? $avaliacoesNoMesResultado[0][0] : 0);
 
         $bd->persistirPreparado(
             "SELECT pe.nome, al.id_aluno, MAX(a.data_avaliacao) AS ultima
@@ -100,7 +102,8 @@ class dashboard
             "i",
             [$fk_unidade]
         );
-        $alunos = (int) ($bd->retornoConsultas()[0][0] ?? 0);
+        $alunosResultado = $bd->retornoConsultas();
+        $alunos = (int) (isset($alunosResultado[0][0]) ? $alunosResultado[0][0] : 0);
 
         $bd->persistirPreparado(
             "SELECT COUNT(*) FROM professor pf
@@ -110,7 +113,8 @@ class dashboard
             "i",
             [$fk_unidade]
         );
-        $professores = (int) ($bd->retornoConsultas()[0][0] ?? 0);
+        $professoresResultado = $bd->retornoConsultas();
+        $professores = (int) (isset($professoresResultado[0][0]) ? $professoresResultado[0][0] : 0);
 
         $bd->desconectar();
 
@@ -147,7 +151,7 @@ class dashboard
         $resultado = [];
         for ($i = $meses - 1; $i >= 0; $i--) {
             $chave = date('Y-m', strtotime("-$i months"));
-            $resultado[] = ['mes' => $chave, 'total' => $porMes[$chave] ?? 0];
+            $resultado[] = ['mes' => $chave, 'total' => isset($porMes[$chave]) ? $porMes[$chave] : 0];
         }
 
         return $resultado;
@@ -179,7 +183,8 @@ class dashboard
             "i",
             [$id_aluno]
         );
-        $fichaTreino = $bd->retornoConsultas()[0] ?? null;
+        $fichaTreinoResultado = $bd->retornoConsultas();
+        $fichaTreino = isset($fichaTreinoResultado[0]) ? $fichaTreinoResultado[0] : null;
 
         $bd->desconectar();
 

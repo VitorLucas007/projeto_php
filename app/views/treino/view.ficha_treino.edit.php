@@ -8,8 +8,8 @@ if (!isset($_SESSION['id']) || !isset($_SESSION['fk_perfil']) || !in_array($_SES
 
 include_once('../../models/model.ficha.class.php');
 
-$id_ficha = (int) ($_GET['id_ficha'] ?? 0);
-$id_aluno = (int) ($_GET['id_aluno'] ?? 0);
+$id_ficha = (int) (isset($_GET['id_ficha']) ? $_GET['id_ficha'] : 0);
+$id_aluno = (int) (isset($_GET['id_aluno']) ? $_GET['id_aluno'] : 0);
 
 if ($id_ficha === 0) {
     die("Ficha não identificada.");
@@ -45,17 +45,17 @@ $exercicios = ficha::buscarExerciciosDaFicha($id_ficha);
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <label class="form-label fw-bold">Nome do Treino *</label>
-                        <input type="text" name="nome_treino" class="form-control" value="<?= htmlspecialchars($fichaAtual[3] ?? '') ?>" required>
+                        <input type="text" name="nome_treino" class="form-control" value="<?= htmlspecialchars(isset($fichaAtual[3]) ? $fichaAtual[3] : '') ?>" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Data de Validade</label>
-                        <input type="date" name="data_validade" class="form-control" value="<?= htmlspecialchars($fichaAtual[5] ?? '') ?>">
+                        <input type="date" name="data_validade" class="form-control" value="<?= htmlspecialchars(isset($fichaAtual[5]) ? $fichaAtual[5] : '') ?>">
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label fw-bold">Observações Gerais</label>
-                    <textarea name="observacoes" class="form-control" rows="2"><?= htmlspecialchars($fichaAtual[6] ?? '') ?></textarea>
+                    <textarea name="observacoes" class="form-control" rows="2"><?= htmlspecialchars(isset($fichaAtual[6]) ? $fichaAtual[6] : '') ?></textarea>
                 </div>
 
                 <h5 class="text-secondary border-bottom pb-2 mb-3 d-flex justify-content-between align-items-center">

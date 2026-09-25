@@ -18,7 +18,7 @@ if ($isProfessor) {
 } else {
     // Se for o aluno logado, busca o id_aluno atrelado à pessoa dele
     include_once('../../models/model.aluno.class.php');
-    $fk_pessoa = $_SESSION['fk_pessoa'] ?? 0;
+    $fk_pessoa = isset($_SESSION['fk_pessoa']) ? $_SESSION['fk_pessoa'] : 0;
 
     // Busca o ID correto do aluno através do vínculo com a pessoa
     $id_aluno = aluno::buscarPorPessoa($fk_pessoa);

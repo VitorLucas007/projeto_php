@@ -9,7 +9,7 @@ if (!isset($_SESSION['id'])) {
 include_once('../../models/model.usuario.class.php');
 
 // Página exclusiva do aluno: cada um só pode ver as próprias avaliações
-if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PESSOA) {
+if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PESSOA) {
     header("Location: ../home/view.home.php");
     exit;
 }

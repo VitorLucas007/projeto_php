@@ -108,7 +108,7 @@ class ficha_composicao
     {
         foreach (self::$campos as $campo => $tipo) {
 
-            $valor = $dadosPost[$campo] ?? null;
+            $valor = isset($dadosPost[$campo]) ? $dadosPost[$campo] : null;
 
             if ($tipo === 'd' || $tipo === 'i') {
                 $this->dados[$campo] = ($valor === null || $valor === '') ? null : $valor;
@@ -141,7 +141,7 @@ class ficha_composicao
 
     function cadastrar()
     {
-        [$colunas, $tipos, $valores] = $this->montarListasBind();
+        list($colunas, $tipos, $valores) = $this->montarListasBind();
 
         $sql = "INSERT INTO ficha_composicao_corporal (" . implode(', ', $colunas) . ")
                 VALUES (" . implode(', ', array_fill(0, count($colunas), '?')) . ")";
@@ -157,7 +157,7 @@ class ficha_composicao
 
     function atualizar($id)
     {
-        [$colunas, $tipos, $valores] = $this->montarListasBind();
+        list($colunas, $tipos, $valores) = $this->montarListasBind();
 
         $sets = implode(', ', array_map(fn($c) => "$c = ?", $colunas));
 
@@ -340,15 +340,15 @@ class ficha_composicao
     // normais) continuam como o professor digitou.
     static function recalcular(array $dados)
     {
-        $peso = self::numOuNull($dados['peso'] ?? null);
-        $altura = self::numOuNull($dados['altura'] ?? null);
-        $massaGordura = self::numOuNull($dados['massa_gordura'] ?? null);
-        $mme = self::numOuNull($dados['massa_muscular_esqueletica'] ?? null);
-        $idade = self::numOuNull($dados['idade_referencia'] ?? null);
-        $sexo = $dados['sexo_referencia'] ?? null;
-        $fatorAtividade = self::numOuNull($dados['fator_atividade'] ?? null) ?: 1.55;
-        $cintura = self::numOuNull($dados['_cintura_avaliacao'] ?? null);
-        $quadril = self::numOuNull($dados['_quadril_avaliacao'] ?? null);
+        $peso = self::numOuNull(isset($dados['peso']) ? $dados['peso'] : null);
+        $altura = self::numOuNull(isset($dados['altura']) ? $dados['altura'] : null);
+        $massaGordura = self::numOuNull(isset($dados['massa_gordura']) ? $dados['massa_gordura'] : null);
+        $mme = self::numOuNull(isset($dados['massa_muscular_esqueletica']) ? $dados['massa_muscular_esqueletica'] : null);
+        $idade = self::numOuNull(isset($dados['idade_referencia']) ? $dados['idade_referencia'] : null);
+        $sexo = isset($dados['sexo_referencia']) ? $dados['sexo_referencia'] : null;
+        $fatorAtividade = self::numOuNull(isset($dados['fator_atividade']) ? $dados['fator_atividade'] : null) ?: 1.55;
+        $cintura = self::numOuNull(isset($dados['_cintura_avaliacao']) ? $dados['_cintura_avaliacao'] : null);
+        $quadril = self::numOuNull(isset($dados['_quadril_avaliacao']) ? $dados['_quadril_avaliacao'] : null);
 
         $alturaM = $altura ? $altura / 100 : null;
 

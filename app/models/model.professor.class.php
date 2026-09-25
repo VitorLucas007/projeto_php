@@ -89,7 +89,7 @@ class professor
 
         $bd->desconectar();
 
-        return $dados[0][0] ?? null;
+        return isset($dados[0][0]) ? $dados[0][0] : null;
     }
 
     function buscarProfessor($id)

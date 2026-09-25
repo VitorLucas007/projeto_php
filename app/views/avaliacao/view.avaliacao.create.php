@@ -8,7 +8,7 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
+if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../home/view.home.php");
     exit;
 }
@@ -19,7 +19,7 @@ include_once('../../models/model.professor.class.php');
 $prontuarios = avaliacao::listarProntuarios();
 $v = [
     'fk_professor' => professor::buscarPorPessoa($_SESSION['fk_pessoa']),
-    'fk_prontuario' => $_GET['fk_prontuario'] ?? '',
+    'fk_prontuario' => isset($_GET['fk_prontuario']) ? $_GET['fk_prontuario'] : '',
 ];
 $nomeProfessorResponsavel = $_SESSION['nome'];
 ?>

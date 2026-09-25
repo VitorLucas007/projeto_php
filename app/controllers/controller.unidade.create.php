@@ -7,17 +7,17 @@ include_once('../models/model.pessoa.class.php');
 include_once('../models/model.usuario.class.php');
 
 // Campos da unidade
-$nomeUnidade = trim($_POST['unidade_nome'] ?? '');
-$cnpj        = trim($_POST['unidade_cnpj'] ?? '');
-$endereco    = trim($_POST['unidade_endereco'] ?? '');
-$telefone    = trim($_POST['unidade_telefone'] ?? '');
+$nomeUnidade = trim(isset($_POST['unidade_nome']) ? $_POST['unidade_nome'] : '');
+$cnpj        = trim(isset($_POST['unidade_cnpj']) ? $_POST['unidade_cnpj'] : '');
+$endereco    = trim(isset($_POST['unidade_endereco']) ? $_POST['unidade_endereco'] : '');
+$telefone    = trim(isset($_POST['unidade_telefone']) ? $_POST['unidade_telefone'] : '');
 
 // Campos do admin da unidade
-$adminNome = trim($_POST['admin_nome'] ?? '');
-$adminEmail = trim($_POST['admin_email'] ?? '');
-$adminSenha = $_POST['admin_senha'] ?? '';
-$adminSenhaConfirma = $_POST['admin_senha_confirma'] ?? '';
-$adminDataNascimento = $_POST['admin_data_nascimento'] ?? '';
+$adminNome = trim(isset($_POST['admin_nome']) ? $_POST['admin_nome'] : '');
+$adminEmail = trim(isset($_POST['admin_email']) ? $_POST['admin_email'] : '');
+$adminSenha = isset($_POST['admin_senha']) ? $_POST['admin_senha'] : '';
+$adminSenhaConfirma = isset($_POST['admin_senha_confirma']) ? $_POST['admin_senha_confirma'] : '';
+$adminDataNascimento = isset($_POST['admin_data_nascimento']) ? $_POST['admin_data_nascimento'] : '';
 
 if ($nomeUnidade === '' || $cnpj === '' || $adminNome === '' || $adminEmail === '' || $adminSenha === '' || $adminDataNascimento === '') {
     header("Location: ../views/unidade/view.unidade.create.php?erro=campos");

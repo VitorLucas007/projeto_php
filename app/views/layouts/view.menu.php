@@ -9,9 +9,9 @@ include_once('../../models/model.usuario.class.php');
 $qtdPendentesUnidade = 0;
 $qtdPendentesAdmin = 0;
 
-if (($_SESSION['fk_perfil'] ?? null) == usuario::PERFIL_ADMIN) {
+if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) == usuario::PERFIL_ADMIN) {
     $qtdPendentesUnidade = usuario::contarPendentes($_SESSION['fk_unidade']);
-} elseif (($_SESSION['fk_perfil'] ?? null) == usuario::PERFIL_ROOT) {
+} elseif ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) == usuario::PERFIL_ROOT) {
     $qtdPendentesAdmin = usuario::contarPendentesAdmin();
 }
 
@@ -31,7 +31,7 @@ if (($_SESSION['fk_perfil'] ?? null) == usuario::PERFIL_ADMIN) {
                     <a class="nav-link" href="../home/view.home.php">Home</a>
                 </li>
 
-                <?php if (($_SESSION['fk_perfil'] ?? null) == 1): // ADMIN ?>
+                <?php if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) == 1): // ADMIN ?>
                     <li class="nav-item">
                         <a class="nav-link" href="../admin/view.usuarios.pendentes.php">
                             Aprovações Pendentes
@@ -42,7 +42,7 @@ if (($_SESSION['fk_perfil'] ?? null) == usuario::PERFIL_ADMIN) {
                     </li>
                 <?php endif; ?>
 
-                <?php if (($_SESSION['fk_perfil'] ?? null) == 4): // ROOT ?>
+                <?php if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) == 4): // ROOT ?>
                     <li class="nav-item">
                         <a class="nav-link" href="../root/view.root.admins.pendentes.php">
                             Unidades Pendentes

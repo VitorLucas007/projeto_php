@@ -4,7 +4,7 @@ session_start();
 
 include_once('../models/model.usuario.class.php');
 
-if (!isset($_SESSION['id']) || ($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
+if (!isset($_SESSION['id']) || (isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../views/auth/view.login.php");
     exit;
 }
@@ -12,7 +12,7 @@ if (!isset($_SESSION['id']) || ($_SESSION['fk_perfil'] ?? null) != usuario::PERF
 include_once('../models/model.professor.class.php');
 include_once('../models/model.ficha_composicao.class.php');
 
-$fkAvaliacao = (int) ($_POST['fk_avaliacao'] ?? 0);
+$fkAvaliacao = (int) (isset($_POST['fk_avaliacao']) ? $_POST['fk_avaliacao'] : 0);
 $contexto = ficha_composicao::buscarContextoAvaliacao($fkAvaliacao);
 
 if (!$contexto) {

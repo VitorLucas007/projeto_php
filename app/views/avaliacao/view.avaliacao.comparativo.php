@@ -8,7 +8,7 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-$perfil = $_SESSION['fk_perfil'] ?? null;
+$perfil = isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null;
 
 if (!in_array($perfil, [usuario::PERFIL_PROFESSOR, usuario::PERFIL_PESSOA], true)) {
     header("Location: ../home/view.home.php");
@@ -22,7 +22,7 @@ if ($perfil == usuario::PERFIL_PESSOA) {
     include_once('../../models/model.aluno.class.php');
     $idAluno = aluno::buscarPorPessoa($_SESSION['fk_pessoa']);
 } else {
-    $idAluno = (int) ($_GET['id_aluno'] ?? 0);
+    $idAluno = (int) (isset($_GET['id_aluno']) ? $_GET['id_aluno'] : 0);
 }
 
 $historico = avaliacao::listarCompletoPorAluno($idAluno);
@@ -34,8 +34,8 @@ $totalAvaliacoes = count($historico);
 $idxAnterior = isset($_GET['anterior']) ? (int) $_GET['anterior'] : max(0, $totalAvaliacoes - 2);
 $idxAtual    = isset($_GET['atual'])    ? (int) $_GET['atual']    : max(0, $totalAvaliacoes - 1);
 
-$avAnterior = $historico[$idxAnterior] ?? null;
-$avAtual    = $historico[$idxAtual] ?? null;
+$avAnterior = isset($historico[$idxAnterior]) ? $historico[$idxAnterior] : null;
+$avAtual    = isset($historico[$idxAtual]) ? $historico[$idxAtual] : null;
 
 // Indicadores exibidos no comparativo: chave => [rótulo, unidade, grupo, "maior é melhor?"]
 // contexto: pra maioria das medidas de gordura/circunferência, reduzir é "melhora";
@@ -68,10 +68,10 @@ $indicadores = [
  */
 function montarComparacao($chave, $meta, $anterior, $atual)
 {
-    [$rotulo, $unidade, $grupo, $maiorEhMelhor] = $meta;
+    list($rotulo, $unidade, $grupo, $maiorEhMelhor) = $meta;
 
-    $valorAnterior = $anterior[$chave] ?? null;
-    $valorAtual = $atual[$chave] ?? null;
+    $valorAnterior = isset($anterior[$chave]) ? $anterior[$chave] : null;
+    $valorAtual = isset($atual[$chave]) ? $atual[$chave] : null;
 
     if ($valorAnterior === null || $valorAnterior === '' || $valorAtual === null || $valorAtual === '') {
         return null;
@@ -121,7 +121,7 @@ if ($avAnterior && $avAtual) {
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h2 class="mb-0">Comparativo de Avaliações <?= $nomeAluno ? '— ' . htmlspecialchars($nomeAluno) : '' ?></h2>
             <div class="d-flex gap-2">
-                <a href="view.avaliacao.create.php?fk_prontuario=<?= $avAtual['fk_prontuario'] ?? '' ?>" class="btn btn-success btn-sm">
+                <a href="view.avaliacao.create.php?fk_prontuario=<?= isset($avAtual['fk_prontuario']) ? $avAtual['fk_prontuario'] : '' ?>" class="btn btn-success btn-sm">
                     <i class="bi bi-plus-circle"></i> Nova avaliação
                 </a>
                 <a href="view.avaliacoes.por.aluno.php?id=<?= (int) $idAluno ?>" class="btn btn-secondary btn-sm">Voltar</a>

@@ -200,7 +200,7 @@ class usuario
         $dados = $bd->retornoConsultas();
 
         $bd->desconectar();
-        return (int) ($dados[0][0] ?? 0);
+        return (int) (isset($dados[0][0]) ? $dados[0][0] : 0);
     }
 
     /**
@@ -249,7 +249,7 @@ class usuario
         $dados = $bd->retornoConsultas();
 
         $bd->desconectar();
-        return (int) ($dados[0][0] ?? 0);
+        return (int) (isset($dados[0][0]) ? $dados[0][0] : 0);
     }
 
     static function aprovar($id_usuario)
@@ -285,7 +285,7 @@ class usuario
             return;
         }
 
-        [$fkPessoa, $fkPerfil] = $dados[0];
+        list($fkPessoa, $fkPerfil) = $dados[0];
 
         if (in_array((int) $fkPerfil, [self::PERFIL_PROFESSOR, self::PERFIL_PESSOA], true)) {
             $bd->iniciarTransacao();

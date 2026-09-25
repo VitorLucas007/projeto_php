@@ -8,7 +8,7 @@ if (!isset($_SESSION['id']) || !isset($_SESSION['fk_perfil']) || !in_array($_SES
 }
 
 // Captura o ID do aluno passado pela URL
-$id_aluno = (int) ($_GET['id_aluno'] ?? 0);
+$id_aluno = (int) (isset($_GET['id_aluno']) ? $_GET['id_aluno'] : 0);
 
 if ($id_aluno === 0) {
     die("Erro: Aluno não identificado. Volte e tente novamente.");

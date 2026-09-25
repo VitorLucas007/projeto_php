@@ -7,20 +7,20 @@ include_once('../models/model.professor.class.php');
 include_once('../models/model.aluno.class.php');
 include_once('../models/model.validacoes.class.php');
 
-$nome = trim($_POST['cad_nome'] ?? '');
-$email = trim($_POST['cad_email'] ?? '');
-$senha = $_POST['cad_senha'] ?? '';
-$sexo = $_POST['cad_sexo'] ?? '';
-$dataNascimento = $_POST['cad_data_nascimento'] ?? '';
-$contato = trim($_POST['cad_contato'] ?? '');
-$fkUnidade = (int) ($_POST['cad_unidade'] ?? 0);
-$tipoPerfil = $_POST['cad_tipo'] ?? ''; // "PROFESSOR" ou "ALUNO"
+$nome = trim(isset($_POST['cad_nome']) ? $_POST['cad_nome'] : '');
+$email = trim(isset($_POST['cad_email']) ? $_POST['cad_email'] : '');
+$senha = isset($_POST['cad_senha']) ? $_POST['cad_senha'] : '';
+$sexo = isset($_POST['cad_sexo']) ? $_POST['cad_sexo'] : '';
+$dataNascimento = isset($_POST['cad_data_nascimento']) ? $_POST['cad_data_nascimento'] : '';
+$contato = trim(isset($_POST['cad_contato']) ? $_POST['cad_contato'] : '');
+$fkUnidade = (int) (isset($_POST['cad_unidade']) ? $_POST['cad_unidade'] : 0);
+$tipoPerfil = isset($_POST['cad_tipo']) ? $_POST['cad_tipo'] : ''; // "PROFESSOR" ou "ALUNO"
 
 // Campos específicos
-$cref = trim($_POST['cad_cref'] ?? '');
-$especialidade = trim($_POST['cad_especialidade'] ?? '');
-$observacoes = trim($_POST['cad_observacoes'] ?? '');
-$cpf = trim($_POST['cad_cpf'] ?? '');
+$cref = trim(isset($_POST['cad_cref']) ? $_POST['cad_cref'] : '');
+$especialidade = trim(isset($_POST['cad_especialidade']) ? $_POST['cad_especialidade'] : '');
+$observacoes = trim(isset($_POST['cad_observacoes']) ? $_POST['cad_observacoes'] : '');
+$cpf = trim(isset($_POST['cad_cpf']) ? $_POST['cad_cpf'] : '');
 
 if ($nome === '' || $email === '' || $senha === '' || $sexo === '' || $dataNascimento === '' || $fkUnidade <= 0) {
     header("Location: ../views/auth/view.cadastro.php?erro=campos");

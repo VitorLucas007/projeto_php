@@ -8,7 +8,7 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-$perfil = $_SESSION['fk_perfil'] ?? null;
+$perfil = isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null;
 
 if (!in_array($perfil, [usuario::PERFIL_PROFESSOR, usuario::PERFIL_PESSOA], true)) {
     header("Location: ../home/view.home.php");
@@ -19,7 +19,7 @@ include_once('../../models/model.ficha_composicao.class.php');
 include_once('../../models/model.avaliacao.class.php');
 include_once('../../models/model.professor.class.php');
 
-$id = (int) ($_GET['id'] ?? 0);
+$id = (int) (isset($_GET['id']) ? $_GET['id'] : 0);
 $v = ficha_composicao::buscarPorId($id);
 
 if (!$v) {
@@ -182,7 +182,7 @@ $medidas = [
         <div class="cabecalho-marca">
             <div>
                 <h1>Ficha de Composição Corporal</h1>
-                <div class="text-muted">Relatório de Composição Corporal — Aluno: <strong><?= htmlspecialchars($contexto['nome'] ?? '—') ?></strong></div>
+                <div class="text-muted">Relatório de Composição Corporal — Aluno: <strong><?= htmlspecialchars(isset($contexto['nome']) ? $contexto['nome'] : '—') ?></strong></div>
             </div>
             <div class="text-end texto-pequeno">
                 <div>Ficha nº <?= (int) $v['id_ficha'] ?></div>
@@ -273,7 +273,8 @@ $medidas = [
                 'Perna Esq.' => ['seg_magra_perna_esq_kg', 'seg_magra_perna_esq_pct'],
                 'Perna Dir.' => ['seg_magra_perna_dir_kg', 'seg_magra_perna_dir_pct'],
             ];
-            foreach ($segMagra as $rotulo => [$kg, $pct]):
+            foreach ($segMagra as $rotulo => $meta):
+                list($kg, $pct) = $meta;
             ?>
                 <div class="col">
                     <div class="segmento-caixa">
@@ -295,7 +296,8 @@ $medidas = [
                 'Perna Esq.' => ['seg_gordura_perna_esq_kg', 'seg_gordura_perna_esq_pct'],
                 'Perna Dir.' => ['seg_gordura_perna_dir_kg', 'seg_gordura_perna_dir_pct'],
             ];
-            foreach ($segGordura as $rotulo => [$kg, $pct]):
+            foreach ($segGordura as $rotulo => $meta):
+                list($kg, $pct) = $meta;
             ?>
                 <div class="col">
                     <div class="segmento-caixa">
@@ -358,7 +360,7 @@ $medidas = [
         <?php endif; ?>
 
         <div class="mt-4 pt-3 border-top d-flex justify-content-between texto-pequeno">
-            <div>Professor avaliador: <strong><?= htmlspecialchars($nomeProfessor ?? '—') ?></strong></div>
+            <div>Professor avaliador: <strong><?= htmlspecialchars(isset($nomeProfessor) ? $nomeProfessor : '—') ?></strong></div>
             <div>Assinatura do avaliador: ______________________________</div>
         </div>
     </div>
@@ -368,12 +370,12 @@ $medidas = [
         <div class="d-flex justify-content-between align-items-start">
             <div>
                 <h3 class="mb-0">Ficha de Composição Corporal — Verso</h3>
-                <div class="text-muted">Aluno: <strong><?= htmlspecialchars($contexto['nome'] ?? '—') ?></strong></div>
+                <div class="text-muted">Aluno: <strong><?= htmlspecialchars(isset($contexto['nome']) ? $contexto['nome'] : '—') ?></strong></div>
             </div>
             <div class="text-end texto-pequeno">
                 <div>Ficha nº <?= (int) $v['id_ficha'] ?> — referente à Avaliação nº <?= (int) $v['fk_avaliacao'] ?></div>
                 <div>Data: <?= date('d/m/Y', strtotime($avaliacao['data_avaliacao'])) ?></div>
-                <div>Professor: <?= htmlspecialchars($nomeProfessor ?? '—') ?></div>
+                <div>Professor: <?= htmlspecialchars(isset($nomeProfessor) ? $nomeProfessor : '—') ?></div>
             </div>
         </div>
 
@@ -405,7 +407,7 @@ $medidas = [
                 <tr>
                     <?php foreach ($par as $chave => $rotulo): ?>
                         <th style="width:25%"><?= $rotulo ?></th>
-                        <td style="width:25%"><?= fmtN($avaliacao[$chave] ?? null, 2) ?> cm</td>
+                        <td style="width:25%"><?= fmtN(isset($avaliacao[$chave]) ? $avaliacao[$chave] : null, 2) ?> cm</td>
                     <?php endforeach; ?>
                 </tr>
             <?php endforeach; ?>

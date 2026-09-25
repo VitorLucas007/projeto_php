@@ -8,16 +8,16 @@
  *   $readonly  => opcional; quando true, todos os campos ficam desabilitados
  *   (usado na tela de detalhe somente-leitura de OS-6)
  *
- * Helper local pra não repetir htmlspecialchars($v['campo'] ?? '') o tempo todo.
+ * Helper local pra não repetir htmlspecialchars(isset($v['campo']) ? $v['campo'] : '') o tempo todo.
  */
 function campo($v, $chave) {
-    return htmlspecialchars($v[$chave] ?? '');
+    return htmlspecialchars(isset($v[$chave]) ? $v[$chave] : '');
 }
 function marcado($v, $chave) {
     return (!empty($v[$chave]) && $v[$chave] != 0) ? 'checked' : '';
 }
 
-$readonly = $readonly ?? false;
+$readonly = isset($readonly) ? $readonly : false;
 $dis = $readonly ? 'disabled' : '';
 ?>
 
@@ -27,7 +27,7 @@ $dis = $readonly ? 'disabled' : '';
         <select name="fk_prontuario" class="form-select" required <?= $dis ?>>
             <option value="">Selecione...</option>
             <?php foreach ($prontuarios as $p): ?>
-                <option value="<?= (int) $p[0] ?>" <?= (($v['fk_prontuario'] ?? '') == $p[0]) ? 'selected' : '' ?>>
+                <option value="<?= (int) $p[0] ?>" <?= ((isset($v['fk_prontuario']) ? $v['fk_prontuario'] : '') == $p[0]) ? 'selected' : '' ?>>
                     Prontuário #<?= (int) $p[0] ?> — <?= htmlspecialchars($p[1]) ?>
                 </option>
             <?php endforeach; ?>
@@ -35,8 +35,8 @@ $dis = $readonly ? 'disabled' : '';
     </div>
     <div class="col-md-6 mb-3">
         <label>Professor responsável</label>
-        <input type="text" class="form-control" value="<?= htmlspecialchars($nomeProfessorResponsavel ?? '') ?>" disabled>
-        <input type="hidden" name="fk_professor" value="<?= (int) ($v['fk_professor'] ?? 0) ?>">
+        <input type="text" class="form-control" value="<?= htmlspecialchars(isset($nomeProfessorResponsavel) ? $nomeProfessorResponsavel : '') ?>" disabled>
+        <input type="hidden" name="fk_professor" value="<?= (int) (isset($v['fk_professor']) ? $v['fk_professor'] : 0) ?>">
     </div>
 </div>
 
@@ -181,7 +181,8 @@ $dis = $readonly ? 'disabled' : '';
         'imc'                   => ['IMC', 'ex: 23.40'],
         'taxa_metabolica_basal' => ['Taxa metabólica basal (kcal)', 'ex: 1650'],
     ];
-    foreach ($bioimpedancia as $chave => [$rotulo, $placeholder]):
+    foreach ($bioimpedancia as $chave => $meta):
+        list($rotulo, $placeholder) = $meta;
     ?>
         <div class="col-md-3 mb-3">
             <label><?= $rotulo ?></label>

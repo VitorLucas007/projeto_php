@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 include_once('../models/model.validacoes.class.php');
 include_once('../models/model.unidade.class.php');
 
-$cnpj = trim($_POST['cnpj'] ?? '');
+$cnpj = trim(isset($_POST['cnpj']) ? $_POST['cnpj'] : '');
 
 $valido = $cnpj !== '' && validacoes::validar_cnpj($cnpj);
 $existe = false;

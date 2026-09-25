@@ -12,7 +12,7 @@ include_once('../models/model.professor.class.php');
 
 // Resgata o id_professor vinculado à pessoa logada (usando o método do seu model)
 // Confirme se a sua sessão de login salva o 'fk_pessoa'. Se salvar com outro nome, altere aqui.
-$fk_pessoa_logada = $_SESSION['fk_pessoa'] ?? 0;
+$fk_pessoa_logada = isset($_SESSION['fk_pessoa']) ? $_SESSION['fk_pessoa'] : 0;
 $fk_professor = professor::buscarPorPessoa($fk_pessoa_logada);
 
 if (!$fk_professor) {
@@ -20,10 +20,10 @@ if (!$fk_professor) {
 }
 
 // Dados do cabeçalho da Ficha
-$fk_aluno = (int) ($_POST['id_aluno'] ?? 0);
-$nome_treino = trim($_POST['nome_treino'] ?? '');
+$fk_aluno = (int) (isset($_POST['id_aluno']) ? $_POST['id_aluno'] : 0);
+$nome_treino = trim(isset($_POST['nome_treino']) ? $_POST['nome_treino'] : '');
 $data_validade = !empty($_POST['data_validade']) ? $_POST['data_validade'] : null;
-$observacoes = trim($_POST['observacoes'] ?? '');
+$observacoes = trim(isset($_POST['observacoes']) ? $_POST['observacoes'] : '');
 $data_criacao = date('Y-m-d');
 
 if ($fk_aluno === 0 || $nome_treino === '') {
@@ -32,11 +32,11 @@ if ($fk_aluno === 0 || $nome_treino === '') {
 }
 
 // Arrays dos exercícios preenchidos no formulário
-$nomes_maquina = $_POST['exercicio'] ?? [];
-$series = $_POST['series'] ?? [];
-$repeticoes = $_POST['repeticoes'] ?? [];
-$cargas = $_POST['carga'] ?? [];
-$descansos = $_POST['descanso'] ?? [];
+$nomes_maquina = isset($_POST['exercicio']) ? $_POST['exercicio'] : [];
+$series = isset($_POST['series']) ? $_POST['series'] : [];
+$repeticoes = isset($_POST['repeticoes']) ? $_POST['repeticoes'] : [];
+$cargas = isset($_POST['carga']) ? $_POST['carga'] : [];
+$descansos = isset($_POST['descanso']) ? $_POST['descanso'] : [];
 
 $bd = new persistirBD();
 $bd->conectar();
@@ -57,10 +57,10 @@ try {
             $nomeEx = trim($nomes_maquina[$i]);
             
             if ($nomeEx !== '') {
-                $serie = (int) ($series[$i] ?? 0);
-                $rep = trim($repeticoes[$i] ?? '');
-                $carg = trim($cargas[$i] ?? '');
-                $descanso = trim($descansos[$i] ?? '');
+                $serie = (int) (isset($series[$i]) ? $series[$i] : 0);
+                $rep = trim(isset($repeticoes[$i]) ? $repeticoes[$i] : '');
+                $carg = trim(isset($cargas[$i]) ? $cargas[$i] : '');
+                $descanso = trim(isset($descansos[$i]) ? $descansos[$i] : '');
 
                 $bd->persistirPreparado($sqlExercicio, "isisss", [$id_ficha, $nomeEx, $serie, $rep, $carg, $descanso]);
             }

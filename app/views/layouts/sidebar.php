@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-$perfil = $_SESSION['fk_perfil'] ?? null;
+$perfil = isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null;
 
 $ehAdmin = ($perfil == 1);
 $ehProfessor = ($perfil == 2);

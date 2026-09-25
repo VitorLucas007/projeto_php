@@ -8,14 +8,14 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
+if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../home/view.home.php");
     exit;
 }
 
 include_once('../../models/model.ficha_composicao.class.php');
 
-$fkAvaliacao = (int) ($_GET['fk_avaliacao'] ?? 0);
+$fkAvaliacao = (int) (isset($_GET['fk_avaliacao']) ? $_GET['fk_avaliacao'] : 0);
 $contexto = ficha_composicao::buscarContextoAvaliacao($fkAvaliacao);
 
 if (!$contexto) {

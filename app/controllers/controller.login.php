@@ -3,8 +3,8 @@
 include_once('../models/model.usuario.class.php');
 
 $usuario = new usuario(
-    trim($_POST['login_email'] ?? ''),
-    $_POST['login_senha'] ?? ''
+    trim(isset($_POST['login_email']) ? $_POST['login_email'] : ''),
+    isset($_POST['login_senha']) ? $_POST['login_senha'] : ''
 );
 
 $resultado = $usuario->loginUsuario();

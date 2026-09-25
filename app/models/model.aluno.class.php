@@ -98,7 +98,7 @@ class aluno
         $id_aluno = 0;
         if (is_array($resultado) && isset($resultado[0]) && is_array($resultado[0])) {
             $linha = $resultado[0];
-            $id_aluno = (int) ($linha['id_aluno'] ?? $linha[0] ?? 0);
+            $id_aluno = (int) (isset($linha['id_aluno']) ? $linha['id_aluno'] : (isset($linha[0]) ? $linha[0] : 0));
         }
         
         $bd->desconectar();

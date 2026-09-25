@@ -4,14 +4,14 @@ session_start();
 
 include_once('../models/model.usuario.class.php');
 
-if (!isset($_SESSION['id']) || ($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
+if (!isset($_SESSION['id']) || (isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../views/auth/view.login.php");
     exit;
 }
 
 include_once('../models/model.avaliacao.class.php');
 
-$id = (int) ($_POST['id_avaliacao'] ?? 0);
+$id = (int) (isset($_POST['id_avaliacao']) ? $_POST['id_avaliacao'] : 0);
 
 if ($id > 0) {
     $existente = avaliacao::buscarAvaliacao($id);

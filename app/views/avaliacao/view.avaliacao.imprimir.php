@@ -8,7 +8,7 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-$perfil = $_SESSION['fk_perfil'] ?? null;
+$perfil = isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null;
 
 if (!in_array($perfil, [usuario::PERFIL_PROFESSOR, usuario::PERFIL_PESSOA], true)) {
     header("Location: ../home/view.home.php");
@@ -18,7 +18,7 @@ if (!in_array($perfil, [usuario::PERFIL_PROFESSOR, usuario::PERFIL_PESSOA], true
 include_once('../../models/model.avaliacao.class.php');
 include_once('../../models/model.professor.class.php');
 
-$id = (int) ($_GET['id'] ?? 0);
+$id = (int) (isset($_GET['id']) ? $_GET['id'] : 0);
 $v = avaliacao::buscarAvaliacao($id);
 
 if (!$v) {
@@ -38,7 +38,7 @@ $nomeProfessorResponsavel = professor::buscarNomePorId($v['fk_professor']);
 $nomeAluno = avaliacao::buscarNomeAluno(
     // resolve id_aluno a partir do fk_prontuario indiretamente via fk_pessoa já checado acima
     // quando professor, buscamos pelo prontuário mesmo
-    (int) ($_GET['id_aluno'] ?? 0)
+    (int) (isset($_GET['id_aluno']) ? $_GET['id_aluno'] : 0)
 );
 
 // Fallback: se não veio id_aluno na URL, descobre pelo próprio registro.
@@ -57,7 +57,7 @@ if (!$nomeAluno) {
     );
     $resultado = $bd->retornoConsultas();
     $bd->desconectar();
-    $nomeAluno = $resultado[0][0] ?? '—';
+    $nomeAluno = isset($resultado[0][0]) ? $resultado[0][0] : '—';
 }
 
 function fmt($valor, $unidade = '')
@@ -131,7 +131,7 @@ $bioimpedancia = [
             <div class="text-end">
                 <div>Avaliação nº <?= (int) $v['id_avaliacao'] ?></div>
                 <div>Data: <?= date('d/m/Y', strtotime($v['data_avaliacao'])) ?></div>
-                <div>Professor: <?= htmlspecialchars($nomeProfessorResponsavel ?? '—') ?></div>
+                <div>Professor: <?= htmlspecialchars(isset($nomeProfessorResponsavel) ? $nomeProfessorResponsavel : '—') ?></div>
             </div>
         </div>
 
@@ -163,7 +163,7 @@ $bioimpedancia = [
                 <tr>
                     <?php foreach ($par as $chave => $rotulo): ?>
                         <th style="width:25%"><?= $rotulo ?></th>
-                        <td style="width:25%"><?= fmt($v[$chave] ?? null, 'cm') ?></td>
+                        <td style="width:25%"><?= fmt(isset($v[$chave]) ? $v[$chave] : null, 'cm') ?></td>
                     <?php endforeach; ?>
                 </tr>
             <?php endforeach; ?>
@@ -174,9 +174,10 @@ $bioimpedancia = [
             <?php $paresBio = array_chunk($bioimpedancia, 2, true); ?>
             <?php foreach ($paresBio as $par): ?>
                 <tr>
-                    <?php foreach ($par as $chave => [$rotulo, $unidade]): ?>
+                    <?php foreach ($par as $chave => $dadosLinha): ?>
+                        <?php list($rotulo, $unidade) = $dadosLinha; ?>
                         <th style="width:25%"><?= $rotulo ?></th>
-                        <td style="width:25%"><?= fmt($v[$chave] ?? null, $unidade) ?></td>
+                        <td style="width:25%"><?= fmt(isset($v[$chave]) ? $v[$chave] : null, $unidade) ?></td>
                     <?php endforeach; ?>
                 </tr>
             <?php endforeach; ?>

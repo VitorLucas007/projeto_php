@@ -8,7 +8,7 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-$perfil = $_SESSION['fk_perfil'] ?? null;
+$perfil = isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null;
 
 if (!in_array($perfil, [usuario::PERFIL_PROFESSOR, usuario::PERFIL_PESSOA], true)) {
     header("Location: ../home/view.home.php");
@@ -18,7 +18,7 @@ if (!in_array($perfil, [usuario::PERFIL_PROFESSOR, usuario::PERFIL_PESSOA], true
 include_once('../../models/model.avaliacao.class.php');
 include_once('../../models/model.professor.class.php');
 
-$id = (int) ($_GET['id'] ?? 0);
+$id = (int) (isset($_GET['id']) ? $_GET['id'] : 0);
 $v = avaliacao::buscarAvaliacao($id);
 
 if (!$v) {

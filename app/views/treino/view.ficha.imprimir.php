@@ -17,7 +17,7 @@ if ($isProfessor) {
     $id_aluno = (int) $_GET['id_aluno'];
 } else {
     include_once('../../models/model.aluno.class.php');
-    $fk_pessoa = $_SESSION['fk_pessoa'] ?? 0;
+    $fk_pessoa = isset($_SESSION['fk_pessoa']) ? $_SESSION['fk_pessoa'] : 0;
     
     $id_aluno = aluno::buscarPorPessoa($fk_pessoa);
     if (!$id_aluno) {

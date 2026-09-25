@@ -4,7 +4,7 @@ session_start();
 
 include_once('../models/model.usuario.class.php');
 
-if (!isset($_SESSION['id']) || ($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_PROFESSOR) {
+if (!isset($_SESSION['id']) || (isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_PROFESSOR) {
     header("Location: ../views/auth/view.login.php");
     exit;
 }

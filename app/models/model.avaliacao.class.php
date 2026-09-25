@@ -73,7 +73,7 @@ class avaliacao
     {
         foreach (self::$campos as $campo => $tipo) {
 
-            $valor = $dadosPost[$campo] ?? null;
+            $valor = isset($dadosPost[$campo]) ? $dadosPost[$campo] : null;
 
             if (in_array($campo, self::$booleanos, true)) {
                 $this->dados[$campo] = (!empty($valor)) ? 1 : 0;
@@ -105,7 +105,7 @@ class avaliacao
 
     function cadastrarAvaliacao()
     {
-        [$colunas, $tipos, $valores] = $this->montarListasBind();
+        list($colunas, $tipos, $valores) = $this->montarListasBind();
 
         $sql = "INSERT INTO avaliacao (" . implode(', ', $colunas) . ")
                 VALUES (" . implode(', ', array_fill(0, count($colunas), '?')) . ")";
@@ -121,7 +121,7 @@ class avaliacao
 
     function atualizarAvaliacao($id)
     {
-        [$colunas, $tipos, $valores] = $this->montarListasBind();
+        list($colunas, $tipos, $valores) = $this->montarListasBind();
 
         $sets = implode(', ', array_map(fn($c) => "$c = ?", $colunas));
 
@@ -338,7 +338,7 @@ class avaliacao
 
         $bd->desconectar();
 
-        return $dados[0][0] ?? null;
+        return isset($dados[0][0]) ? $dados[0][0] : null;
     }
 
     static function listarProntuarios()

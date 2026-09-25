@@ -2,15 +2,15 @@
 // Espera $v (valores atuais), $contexto (ficha_composicao::buscarContextoAvaliacao),
 // $nomeProfessorResponsavel e $readonly (opcional).
 function campoFC($v, $chave) {
-    return htmlspecialchars($v[$chave] ?? '');
+    return htmlspecialchars(isset($v[$chave]) ? $v[$chave] : '');
 }
 
-$readonly = $readonly ?? false;
+$readonly = isset($readonly) ? $readonly : false;
 $dis = $readonly ? 'disabled' : '';
 $sexoPessoa = $contexto['sexo'] === 'F' ? 'F' : 'M'; // OUTRO cai em M por padr√£o; professor pode trocar a refer√™ncia
 ?>
 
-<input type="hidden" name="fk_avaliacao" value="<?= (int) ($contexto['id_avaliacao'] ?? $v['fk_avaliacao'] ?? 0) ?>">
+<input type="hidden" name="fk_avaliacao" value="<?= (int) (isset($contexto['id_avaliacao']) ? $contexto['id_avaliacao'] : (isset($v['fk_avaliacao']) ? $v['fk_avaliacao'] : 0)) ?>">
 <?php if (!empty($v['id_ficha'])): ?>
     <input type="hidden" name="id_ficha" value="<?= (int) $v['id_ficha'] ?>">
 <?php endif; ?>
@@ -18,18 +18,18 @@ $sexoPessoa = $contexto['sexo'] === 'F' ? 'F' : 'M'; // OUTRO cai em M por padr√
 <div class="row">
     <div class="col-md-6 mb-3">
         <label class="form-label">Aluno</label>
-        <input type="text" class="form-control" value="<?= htmlspecialchars($contexto['nome'] ?? '') ?>" disabled>
+        <input type="text" class="form-control" value="<?= htmlspecialchars(isset($contexto['nome']) ? $contexto['nome'] : '') ?>" disabled>
     </div>
     <div class="col-md-6 mb-3">
         <label class="form-label">Professor respons√°vel</label>
-        <input type="text" class="form-control" value="<?= htmlspecialchars($nomeProfessorResponsavel ?? '') ?>" disabled>
+        <input type="text" class="form-control" value="<?= htmlspecialchars(isset($nomeProfessorResponsavel) ? $nomeProfessorResponsavel : '') ?>" disabled>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-3 mb-3">
         <label class="form-label">Data do teste</label>
-        <input type="date" id="data_teste" name="data_teste" class="form-control" value="<?= campoFC($v, 'data_teste') ?: ($contexto['data_avaliacao'] ?? '') ?>" required <?= $dis ?>>
+        <input type="date" id="data_teste" name="data_teste" class="form-control" value="<?= campoFC($v, 'data_teste') ?: (isset($contexto['data_avaliacao']) ? $contexto['data_avaliacao'] : '') ?>" required <?= $dis ?>>
     </div>
     <div class="col-md-3 mb-3">
         <label class="form-label">Hora do teste</label>
@@ -93,7 +93,8 @@ $sexoPessoa = $contexto['sexo'] === 'F' ? 'F' : 'M'; // OUTRO cai em M por padr√
         'massa_gordura'       => ['Massa de gordura (kg)', true],
         'peso'                => ['Peso (kg)', true],
     ];
-    foreach ($composicao as $chave => [$rotulo, $temFaixa]):
+    foreach ($composicao as $chave => $meta):
+        list($rotulo, $temFaixa) = $meta;
     ?>
         <div class="col-md-4 col-lg-2 mb-3">
             <label class="form-label"><?= $rotulo ?></label>
@@ -290,9 +291,9 @@ $sexoPessoa = $contexto['sexo'] === 'F' ? 'F' : 'M'; // OUTRO cai em M por padr√
 <script src="../../../public/assets/js/composicao-calculos.js"></script>
 <script>
 (function () {
-    const dataNascimento = <?= json_encode($contexto['data_nascimento'] ?? null) ?>;
-    const cinturaAvaliacao = <?= json_encode($contexto['cintura'] ?? null) ?>;
-    const quadrilAvaliacao = <?= json_encode($contexto['quadril'] ?? null) ?>;
+    const dataNascimento = <?= json_encode(isset($contexto['data_nascimento']) ? $contexto['data_nascimento'] : null) ?>;
+    const cinturaAvaliacao = <?= json_encode(isset($contexto['cintura']) ? $contexto['cintura'] : null) ?>;
+    const quadrilAvaliacao = <?= json_encode(isset($contexto['quadril']) ? $contexto['quadril'] : null) ?>;
 
     const $ = (id) => document.getElementById(id);
 

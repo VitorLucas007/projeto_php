@@ -8,7 +8,7 @@ if (!isset($_SESSION['id'])) {
 
 include_once('../../models/model.usuario.class.php');
 
-if (($_SESSION['fk_perfil'] ?? null) != usuario::PERFIL_ROOT) {
+if ((isset($_SESSION['fk_perfil']) ? $_SESSION['fk_perfil'] : null) != usuario::PERFIL_ROOT) {
     header("Location: ../home/view.home.php");
     exit;
 }
