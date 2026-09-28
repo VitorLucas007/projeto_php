@@ -23,6 +23,7 @@ class persistirBD
         );
 
         if ($this->db->connect_error) {
+            error_log("Erro ao conectar ao banco de dados: " . $this->db->connect_error);
             die("Erro ao conectar ao banco de dados.");
         }
 
